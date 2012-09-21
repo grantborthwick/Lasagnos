@@ -29,7 +29,7 @@ static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
-
+struct list thread_list;
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
 void
@@ -91,12 +91,12 @@ void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
-  thread *t = thread_current();
+  struct thread *t = thread_current();
   t->wakeup_time = ticks+start;
   sema_down(&t->sema_wakeup);
   
   intr_disable();
-  list_insert_ordered(&thread_list, &t->timer_list_elem, compare_threads_by_wakeup_time(), NULL);
+  list_insert_ordered(&thread_list, &t->timer_list_elem, compare_threads_by_wakeup_time, NULL);
   intr_enable();
   /*while (timer_elapsed (start) < ticks) 
     thread_yield ();*/
@@ -179,13 +179,13 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_tick ();
   //Check to see if first element in list is ready to start
-  if (!list_empty(thread_list))
+  if (!list_empty(&thread_list))
   {
-    const struct thread *head = list_entry(list_begin(thread_list), struct thread, elem);
+    const struct thread *head = list_entry(list_begin(&thread_list), struct thread, elem);
     if(head->wakeup_time >= ticks)
     {
-      list_pop_front(thread_list);
-      sema_up(head->sema_wakeup);
+      list_pop_front(&thread_list);
+      sema_up(&head->sema_wakeup);
     }
   }
 }
@@ -256,7 +256,7 @@ bool compare_threads_by_wakeup_time(struct list_elem *a_, struct list_elem *b_, 
   const struct thread *a = list_entry(a_, struct thread, elem);
   const struct thread *b = list_entry(b_, struct thread, elem);
   
-  return a->wakeup_time < b->wakeup_time
+  return a->wakeup_time < b->wakeup_time;
 }
 
 /* Busy-wait for approximately NUM/DENOM seconds. */
