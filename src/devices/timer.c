@@ -37,6 +37,7 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+  list_init(&thread_list);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -90,10 +91,15 @@ void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
-
-  ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+  thread *t = thread_current();
+  t->wakeup_time = ticks+start;
+  sema_down(&t->sema_wakeup);
+  
+  intr_disable();
+  list_insert_ordered(&thread_list, &t->timer_list_elem, compare_threads_by_wakeup_time(), NULL);
+  intr_enable();
+  /*while (timer_elapsed (start) < ticks) 
+    thread_yield ();*/
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -172,6 +178,16 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+  //Check to see if first element in list is ready to start
+  if (!list_empty(thread_list))
+  {
+    const struct thread *head = list_entry(list_begin(thread_list), struct thread, elem);
+    if(head->wakeup_time >= ticks)
+    {
+      list_pop_front(thread_list);
+      sema_up(head->sema_wakeup);
+    }
+  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
@@ -233,6 +249,14 @@ real_time_sleep (int64_t num, int32_t denom)
          sub-tick timing. */
       real_time_delay (num, denom); 
     }
+}
+
+bool compare_threads_by_wakeup_time(struct list_elem *a_, struct list_elem *b_, void *aux UNUSED)
+{
+  const struct thread *a = list_entry(a_, struct thread, elem);
+  const struct thread *b = list_entry(b_, struct thread, elem);
+  
+  return a->wakeup_time < b->wakeup_time
 }
 
 /* Busy-wait for approximately NUM/DENOM seconds. */

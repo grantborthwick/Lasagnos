@@ -98,6 +98,8 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+	
+	
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -470,6 +472,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
+  sema_init(&t->sema_wakeup, 0);
+  
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -582,6 +586,7 @@ allocate_tid (void)
   return tid;
 }
 
+
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
