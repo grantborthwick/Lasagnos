@@ -104,7 +104,7 @@ test_sleep (int thread_cnt, int iterations)
       t->id = i;
       t->duration = (i + 1) * 10;
       t->iterations = 0;
-
+      printf("Starting Threads");
       snprintf (name, sizeof name, "thread %d", i);
       thread_create (name, PRI_DEFAULT, sleeper, t);
     }

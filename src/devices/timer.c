@@ -90,11 +90,12 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
+  printf("We got into sleep!\n");
   int64_t start = timer_ticks ();
   struct thread *t = thread_current();
   t->wakeup_time = ticks+start;
   sema_down(&t->sema_wakeup);
-  
+  printf("We got woken up\n");
   intr_disable();
   list_insert_ordered(&thread_list, &t->timer_list_elem, compare_threads_by_wakeup_time, NULL);
   intr_enable();
@@ -178,6 +179,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+  printf("Interupting\n");
   //Check to see if first element in list is ready to start
   if (!list_empty(&thread_list))
   {
@@ -255,7 +257,7 @@ bool compare_threads_by_wakeup_time(struct list_elem *a_, struct list_elem *b_, 
 {
   const struct thread *a = list_entry(a_, struct thread, elem);
   const struct thread *b = list_entry(b_, struct thread, elem);
-  
+  printf("We sorted\n");
   return a->wakeup_time < b->wakeup_time;
 }
 
