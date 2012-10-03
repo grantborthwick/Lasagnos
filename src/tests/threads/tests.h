@@ -33,9 +33,6 @@ extern test_func test_mlfqs_fair_20;
 extern test_func test_mlfqs_nice_2;
 extern test_func test_mlfqs_nice_10;
 extern test_func test_mlfqs_block;
-//Tests added by Grant
-extern test_func test_alarm_mega;
-extern test_func test_alarm_onethousand;
 
 void msg (const char *, ...);
 void fail (const char *, ...);

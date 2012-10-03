@@ -29,16 +29,6 @@ test_alarm_many (void)
 {
   test_sleep (5, 14);
 }
-void
-test_alarm_mega (void)
-{
-  test_sleep (5, 70);
-}
-void
-test_alarm_onethousand (void)
-{
-  test_sleep (5, 100);
-}
 
 /* Information about the test. */
 struct sleep_test 
@@ -104,7 +94,7 @@ test_sleep (int thread_cnt, int iterations)
       t->id = i;
       t->duration = (i + 1) * 10;
       t->iterations = 0;
-      printf("Starting Threads, Name: %s \n", name);
+
       snprintf (name, sizeof name, "thread %d", i);
       thread_create (name, PRI_DEFAULT, sleeper, t);
     }
