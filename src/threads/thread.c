@@ -504,14 +504,13 @@ next_thread_to_run (void)
     else{
 		//printf("Starting!\n");
 		struct thread * e;
-		struct thread * t;
+		struct thread * t = idle_thread;
 		for (e = list_begin (&ready_list); e!= list_end (&ready_list); e = list_next (e)){
-			if (t==NULL || (e->priority)>(t->priority)){t = e;}
+			if ((e->priority)>(t->priority)){t = e;}
 		}
 		//printf("e(%s) has priority %d\n",e->name,e->priority);
 		//list_remove(t);
 		//return t;
-		printf("d\n");
 		return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 			
