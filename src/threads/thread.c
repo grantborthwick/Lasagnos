@@ -209,9 +209,9 @@ thread_create (const char *name, int priority,
   intr_set_level (old_level);
 
   /* Add to run queue. */
-  printf("unblocking (%d)%s\n",(t->priority),(t->name));
+  //printf("unblocking (%d)%s\n",(t->priority),(t->name));
   thread_unblock (t);
-  printf("done unblocking (%d)%s\n",(t->priority),(t->name));
+  //printf("done unblocking (%d)%s\n",(t->priority),(t->name));
 
   return tid;
 }
