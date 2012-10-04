@@ -500,10 +500,25 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
-      if (list_empty (&ready_list))
-        return idle_thread;
-      else
-        return list_entry (list_pop_front (&ready_list), struct thread, elem);
+    if (list_empty (&ready_list))
+		return idle_thread;
+    else{
+		//return list_entry (list_pop_front (&ready_list), struct thread, elem);
+		struct thread * e;
+		struct thread * t;
+		e = list_begin (&ready_list);
+		printf("e(%s) has priority %d\n",e->name,e->priority);
+		
+	  }
+			
+	/*
+	      for (e = list_begin (&all_list); e != list_end (&all_list);
+           e = list_next (e))
+        {
+          struct thread *t = list_entry (e, struct thread, allelem);
+          func (t, aux);
+        }
+	*/
 }
 
 /* Completes a thread switch by activating the new thread's page
