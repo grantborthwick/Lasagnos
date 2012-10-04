@@ -31,12 +31,9 @@ test_alarm_priority (void)
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
-  printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   thread_set_priority (PRI_MIN);
-  printf("I am the lowest thread. (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   for (i = 0; i < 10; i++)
     sema_down (&wait_sema);
-  printf("all accounted for.\n");
 }
 
 static void
@@ -46,7 +43,6 @@ alarm_priority_thread (void *aux UNUSED)
   int64_t start_time = timer_ticks ();
   while (timer_elapsed (start_time) == 0)
     continue;
-  printf("(%d)%s woke up at %d\n",(thread_current ()->priority),(thread_current ()->name), wake_time -timer_ticks());
   /* Now we know we're at the very beginning of a timer tick, so
      we can call timer_sleep() without worrying about races
      between checking the time and a timer interrupt. */
