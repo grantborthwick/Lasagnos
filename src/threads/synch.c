@@ -133,7 +133,7 @@ sema_up (struct semaphore *sema)
 	printf("unblock (%d)%s!\n", (t2->priority),(t2->name));
 	thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
-  else{printf("s wait empty.\n");
+  else{printf("s wait empty.\n");}
   printf("if done\n");
   sema->value++;
   intr_set_level (old_level);
