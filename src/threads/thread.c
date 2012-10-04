@@ -515,6 +515,8 @@ next_thread_to_run (void)
 				t2 = e2;
 			}
 		}
+		list_remove(t);
+		return t2;
 		
 		
 		
@@ -538,7 +540,7 @@ next_thread_to_run (void)
           func (t, aux);
         }
 	*/
-	return list_entry (list_pop_front (&ready_list), struct thread, elem);
+	//return list_entry (list_pop_front (&ready_list), struct thread, elem);
 }
 
 /* Completes a thread switch by activating the new thread's page
