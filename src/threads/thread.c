@@ -338,8 +338,8 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
-	  printf("Yielding!\n");
       struct thread *cur = thread_current ();
+	  printf("(%d)%s - Yielding!\n",(cur->priority),(cur->name));
       enum intr_level old_level;
       
       ASSERT (!intr_context ());
