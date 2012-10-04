@@ -342,8 +342,8 @@ thread_yield (void)
       old_level = intr_disable ();
       if (cur != idle_thread) 
         list_push_back (&ready_list, &cur->elem);
-      cur->status = THREAD_READY;
 	  printf("Before schedule\n");
+      cur->status = THREAD_READY;
       schedule ();
       intr_set_level (old_level);
 	  printf("I'm back from the dead.\n");
