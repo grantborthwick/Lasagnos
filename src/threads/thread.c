@@ -249,9 +249,10 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
-  if ((thread_current ()->priority) < (t->priority)){printf("Should yield(%s - %d, %s - %d)\n",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority)); /*thread_yield();*/}
-  else{printf("Did not yield\n");}
-  intr_set_level (old_level);
+  printf("(%s - %d, %s - %d)\n",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority))
+  if ((thread_current ()->priority) < (t->priority)){printf(" => Should yield.\n")); /*thread_yield();*/}
+  else{printf(" => Did not yield\n");}
+  intr_set_level (old_level)
 }
 
 /* Returns the name of the running thread. */
