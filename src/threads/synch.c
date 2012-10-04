@@ -114,6 +114,7 @@ sema_up (struct semaphore *sema)
   ASSERT (sema != NULL);
 
   old_level = intr_disable ();
+  printf("diabled intr\n");
   if (!list_empty (&sema->waiters)) {
 	struct list_elem* e;
 	struct list_elem* t;
@@ -129,8 +130,10 @@ sema_up (struct semaphore *sema)
 		}
 	}
 	list_remove(t);
+	printf("unblock!\n");
 	thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
+  printf("if done\n");
   sema->value++;
   intr_set_level (old_level);
 }
