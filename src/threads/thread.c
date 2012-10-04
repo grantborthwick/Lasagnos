@@ -511,6 +511,7 @@ next_thread_to_run (void)
 		//printf("e(%s) has priority %d\n",e->name,e->priority);
 		//list_remove(t);
 		//return t;
+		printf("d\n");
 		return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 			
