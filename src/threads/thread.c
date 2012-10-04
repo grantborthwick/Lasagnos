@@ -266,7 +266,7 @@ thread_unblock (struct thread *t)
 			u2 = e2;
 			printf("!!");
 		}
-		printf("%s - %d\n",u->name,u->priority);
+		printf("%s - %d\n",u2->name,u2->priority);
 	}
     printf("\n%s has highest with %d\n",u->name,u->priority);
   
