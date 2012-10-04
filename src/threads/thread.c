@@ -251,7 +251,8 @@ thread_unblock (struct thread *t)
   t->status = THREAD_READY;
   intr_set_level (old_level);
   int i = t->priority;
-  printf("%d\n",i);
+  int j = thread_current ()->priority;
+  printf("p = %d, %d\n",i,j);
 }
 
 /* Returns the name of the running thread. */
