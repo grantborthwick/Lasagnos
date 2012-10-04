@@ -586,7 +586,6 @@ schedule (void)
       if (cur != next)
         prev = switch_threads (cur, next);
       thread_schedule_tail (prev);
-	  printf("hello!\n");
 }
 
 /* Returns a tid to use for a new thread. */
