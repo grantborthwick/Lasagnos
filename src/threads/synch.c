@@ -130,7 +130,7 @@ sema_up (struct semaphore *sema)
 		}
 	}
 	list_remove(t);
-	printf("unblock!\n");
+	printf("unblock (%d)%s!\n", (t2->priority),(t2->name));
 	thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   printf("if done\n");
