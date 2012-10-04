@@ -268,7 +268,7 @@ thread_unblock (struct thread *t)
 		}
 		printf("%s - %d\n",u2->name,u2->priority);
 	}
-    printf("\n%s has highest with %d\n",u->name,u->priority);
+    printf("\n%s has highest with %d\n",u2->name,u2->priority);
   
   intr_set_level (old_level);
 }
