@@ -502,7 +502,7 @@ next_thread_to_run (void)
 {
     if (list_empty (&ready_list)){return idle_thread;}
     else{
-		rintf("Starting!\n");
+		printf("Starting!\n");
 		struct thread * e;
 		struct thread * t;
 		/*e = list_begin (&ready_list);
