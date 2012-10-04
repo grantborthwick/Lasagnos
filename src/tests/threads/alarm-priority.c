@@ -46,7 +46,7 @@ alarm_priority_thread (void *aux UNUSED)
   int64_t start_time = timer_ticks ();
   while (timer_elapsed (start_time) == 0)
     continue;
-  printf("(%d)%n woke up at %d\n",(thread_current ()->priority),(thread_current ()->name), wake_time -timer_ticks());
+  printf("(%d)%s woke up at %d\n",(thread_current ()->priority),(thread_current ()->name), wake_time -timer_ticks());
   /* Now we know we're at the very beginning of a timer tick, so
      we can call timer_sleep() without worrying about races
      between checking the time and a timer interrupt. */
