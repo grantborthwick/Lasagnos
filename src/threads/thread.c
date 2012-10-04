@@ -333,6 +333,7 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
+	  printf("Yielding!\n");
       struct thread *cur = thread_current ();
       enum intr_level old_level;
       
