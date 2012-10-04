@@ -509,9 +509,9 @@ next_thread_to_run (void)
 			if (t==NULL || (e->priority)>(t->priority)){t = e;}
 		}
 		//printf("e(%s) has priority %d\n",e->name,e->priority);
-		list_remove(t);
-		return t;
-		//return list_entry (list_pop_front (&ready_list), struct thread, elem);
+		//list_remove(t);
+		//return t;
+		return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 			
 	/*
