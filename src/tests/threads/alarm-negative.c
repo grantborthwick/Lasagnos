@@ -24,14 +24,14 @@ test_alarm_negative (void)
   wake_time = timer_ticks () + 5 * TIMER_FREQ;
   sema_init (&wait_sema, 0);
   
-  /*for (i = 0; i < 10; i++) 
+  for (i = 0; i < 10; i++) 
     {
       int priority = PRI_DEFAULT - (i + 5) % 10 - 1;
       char name[16];
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
-  printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); */
+  printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   thread_set_priority (0);
   printf("I am the lowest thread. Now I start some more!(%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   for (i = 27; i < 38; i++) 
@@ -42,7 +42,7 @@ test_alarm_negative (void)
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
   timer_sleep(1000);
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 20; i++)
     sema_up (&wait_sema);
   printf("all accounted for.\n");
 }
