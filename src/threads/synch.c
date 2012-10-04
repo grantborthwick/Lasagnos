@@ -108,38 +108,17 @@ sema_try_down (struct semaphore *sema)
 void
 sema_up (struct semaphore *sema) 
 {
-  printf("Sema_up\n");
   enum intr_level old_level;
 
   ASSERT (sema != NULL);
 
   old_level = intr_disable ();
-  printf("diabled intr\n");
   if (!list_empty (&sema->waiters)) {
-	/*struct list_elem* e;
-	struct list_elem* t;
-	struct thread* e2;
-	struct thread* t2 = NULL;
-	for (e = (list_begin (&sema->waiters)); e!= list_end (&sema->waiters); 
-		e = list_next(e))
-	{
-		e2 = list_entry (e, struct thread, elem);
-		if (t2==NULL||(e2->priority)>(t2->priority)){
-			t = e;
-			t2 = e2;
-		}
-	}
-	list_remove(t);
-	printf("unblock (%d)%s!\n", (t2->priority),(t2->name));
-	thread_unblock (list_entry (t2,struct thread, elem));*/
-	thread_unblock (list_entry (list_pop_front (&sema->waiters),
+    thread_unblock (list_entry (list_pop_front (&sema->waiters),
                                 struct thread, elem));
   }
-  else{printf("s wait empty.\n");}
-  printf("if done\n");
   sema->value++;
   intr_set_level (old_level);
-  printf("leaving sema_up\n");
 }
 
 static void sema_test_helper (void *sema_);
