@@ -254,21 +254,21 @@ thread_unblock (struct thread *t)
   //else{printf(" => Did not yield\n");}
   
   struct list_elem* e;
-  struct list_elem* t;
+  struct list_elem* u;
   struct thread* e2;
-  struct thread* t2 = NULL;
+  struct thread* u2 = NULL;
   for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
 	e = list_next(e))
 	{
 		e2 = list_entry (list_begin (&ready_list), struct thread, elem);
-		if (t2==NULL||(e2->priority)>(t2->priority)){
-			t = e;
-			t2 = e2;
+		if (u2==NULL||(e2->priority)>(u2->priority)){
+			u = e;
+			u2 = e2;
 			printf("!!");
 		}
-		printf("%s - %d\n",t->name,t->priority);
+		printf("%s - %d\n",u->name,u->priority);
 	}
-    printf("\n%s has highest with %d\n",t->name,t->priority);
+    printf("\n%s has highest with %d\n",u->name,u->priority);
   
   intr_set_level (old_level);
 }
