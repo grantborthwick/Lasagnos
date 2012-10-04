@@ -530,7 +530,7 @@ static struct thread *
 next_thread_to_run (void) 
 {
     if (list_empty (&ready_list)){return idle_thread;}
-    else{
+    else{/*
 		struct list_elem* e;
 		struct list_elem* t;
 		struct thread* e2;
@@ -545,7 +545,7 @@ next_thread_to_run (void)
 			}
 		}
 		list_remove(t);
-		return t2;
+		return t2;*/
 		//return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 }
