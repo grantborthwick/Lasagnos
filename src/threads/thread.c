@@ -579,7 +579,6 @@ schedule (void)
       struct thread *cur = running_thread ();
       struct thread *next = next_thread_to_run ();
       struct thread *prev = NULL;
-	  printf("does it work\n");
       ASSERT (intr_get_level () == INTR_OFF);
       ASSERT (cur->status != THREAD_RUNNING);
       ASSERT (is_thread (next));
@@ -587,6 +586,7 @@ schedule (void)
       if (cur != next)
         prev = switch_threads (cur, next);
       thread_schedule_tail (prev);
+	  printf("hello!\n");
 }
 
 /* Returns a tid to use for a new thread. */
