@@ -538,7 +538,7 @@ next_thread_to_run (void)
 		for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
 		     e = list_next(e))
 		{
-			e2 = list_entry (list_begin (&ready_list), struct thread, elem);
+			e2 = list_entry (e, struct thread, elem);
 			if (t2==NULL||(e2->priority)>(t2->priority)){
 				t = e;
 				t2 = e2;
