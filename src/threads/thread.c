@@ -510,7 +510,7 @@ next_thread_to_run (void)
 		}
 		
 		
-		return list_entry (list_pop_front (&ready_list), struct thread, elem);
+		
 	}
 			
 	/*'
@@ -531,6 +531,7 @@ next_thread_to_run (void)
           func (t, aux);
         }
 	*/
+	return list_entry (list_pop_front (&ready_list), struct thread, elem);
 }
 
 /* Completes a thread switch by activating the new thread's page
