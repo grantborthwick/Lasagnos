@@ -253,7 +253,7 @@ thread_unblock (struct thread *t)
   int i = t->priority;
   int j = thread_current ()->priority;
   printf("p = %d, %d (%d, %d)\n",i,j, t->priority, thread_current ()->priority);
-  if ((thread_current ()->priority) < (t-priority)){printf("Oh no\n");}
+  if ((thread_current ()->priority) < (t->priority)){printf("Oh no\n");}
 }
 
 /* Returns the name of the running thread. */
