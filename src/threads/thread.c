@@ -351,7 +351,7 @@ thread_yield (void)
       cur->status = THREAD_READY;
       schedule ();
       intr_set_level (old_level);
-	  printf("I'm back from the dead.\n");
+	  printf("(%d)%s is back from the dead.\n",(current_thread()->priority),(current_thread()->name));
 }
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
