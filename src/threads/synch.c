@@ -127,15 +127,15 @@ sema_up (struct semaphore *sema)
 			t2 = e2;
 		}
 	}
-	thread_unblock (list_entry (t, struct thread, elem));
-	list_remove(t);
+	//thread_unblock (list_entry (t, struct thread, elem));
+	//list_remove(t);
 	
 	
 	
 	
 	
-	//thread_unblock (list_entry (list_pop_front (&sema->waiters),
-    //                            struct thread, elem));
+	thread_unblock (list_entry (list_pop_front (&sema->waiters),
+                                struct thread, elem));
   }
   sema->value++;
   intr_set_level (old_level);
