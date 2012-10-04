@@ -252,6 +252,24 @@ thread_unblock (struct thread *t)
   //printf("(%s - %d, %s - %d)",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority));
   if ((thread_current ()->priority) < (t->priority)){/*printf(" => Should yield.\n");*/ /* todo thread_yield();*/}
   //else{printf(" => Did not yield\n");}
+  
+  struct list_elem* e;
+  struct list_elem* t;
+  struct thread* e2;
+  struct thread* t2 = NULL;
+  for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
+	e = list_next(e))
+	{
+		e2 = list_entry (list_begin (&ready_list), struct thread, elem);
+		if (t2==NULL||(e2->priority)>(t2->priority)){
+			t = e;
+			t2 = e2;
+			printf("!!");
+		}
+		printf("%s - %d\n",t->name,t->priority);
+	}
+    printf("\n%s has highest with %d\n",t->name,t->priority);
+  
   intr_set_level (old_level);
 }
 
