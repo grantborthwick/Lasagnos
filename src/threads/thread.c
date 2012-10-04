@@ -506,7 +506,7 @@ next_thread_to_run (void)
 		struct thread * e;
 		struct thread * t;
 		for (e = list_begin (&ready_list); e!= list_end (&ready_list); e = list_next (e)){
-			if ((e->priority)>(t->priority)){t = e;}
+			if (t==NULL || (e->priority)>(t->priority)){t = e;}
 		}
 		//printf("e(%s) has priority %d\n",e->name,e->priority);
 		return list_entry (list_pop_front (&ready_list), struct thread, elem);
