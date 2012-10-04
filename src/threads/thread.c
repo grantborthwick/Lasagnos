@@ -516,31 +516,9 @@ next_thread_to_run (void)
 			}
 		}
 		list_remove(t);
+		printf("aaaaa\n");
 		return t2;
-		
-		
-		
 	}
-			
-	/*'
-	struct list_elem *e;
-  struct list_elem *t = list_begin (list);
-  for (e = list_begin (list); e != list_end (list); e = list_next (e))
-    if((e->priority) > (t->priority)){t = e;}
-  //remove t?
-  //remove t?
-  return t;
-	
-	
-	
-	      for (e = list_begin (&all_list); e != list_end (&all_list);
-           e = list_next (e))
-        {
-          struct thread *t = list_entry (e, struct thread, allelem);
-          func (t, aux);
-        }
-	*/
-	//return list_entry (list_pop_front (&ready_list), struct thread, elem);
 }
 
 /* Completes a thread switch by activating the new thread's page
