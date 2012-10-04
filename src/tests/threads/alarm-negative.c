@@ -32,7 +32,7 @@ test_alarm_negative (void)
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
   printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); */
-  thread_set_priority (PRI_MIN);
+  thread_set_priority (0);
   printf("I am the lowest thread. Now I start some more!(%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   for (i = 1; i < 63; i++) 
     {
@@ -41,7 +41,6 @@ test_alarm_negative (void)
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
-	sleep(10);
   for (i = 0; i < 10; i++)
     sema_up (&wait_sema);
   printf("all accounted for.\n");
