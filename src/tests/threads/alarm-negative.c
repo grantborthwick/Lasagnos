@@ -14,7 +14,7 @@ static int64_t wake_time;
 static struct semaphore wait_sema;
 
 void
-test_alarm_priority (void) 
+test_alarm_negative (void) 
 {
   int i;
   
