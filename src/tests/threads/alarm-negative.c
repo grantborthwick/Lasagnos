@@ -34,7 +34,7 @@ test_alarm_negative (void)
   printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); */
   thread_set_priority (0);
   printf("I am the lowest thread. Now I start some more!(%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
-  for (i = 1; i < 63; i++) 
+  for (i = 27; i < 38; i++) 
     {
       int priority = i; //definitely weird order and sema down before others.
       char name[16];
