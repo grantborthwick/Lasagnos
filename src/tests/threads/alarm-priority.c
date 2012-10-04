@@ -26,14 +26,14 @@ test_alarm_priority (void)
   
   for (i = 0; i < 10; i++) 
     {
-      int priority = PRI_DEFAULT - (i + 5) % 10 - 10;
+      int priority = PRI_DEFAULT - (i + 5) % 10 - 1;
       char name[16];
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
   printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   thread_set_priority (PRI_MIN);
-
+  printf("I am the lowest thread. (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   for (i = 0; i < 10; i++)
     sema_down (&wait_sema);
 }
