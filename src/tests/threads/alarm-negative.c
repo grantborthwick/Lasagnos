@@ -52,7 +52,7 @@ alarm_priority_thread (void *aux UNUSED)
   
   sema_down (&wait_sema);
   /* Print a message on wake-up. */
-  printf ("Thread %s woke up.", thread_name ());
+  printf ("Thread %s woke up.\n", thread_name ());
 
   sema_up (&wait_sema);
 }
