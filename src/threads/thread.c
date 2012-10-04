@@ -502,19 +502,28 @@ next_thread_to_run (void)
 {
     if (list_empty (&ready_list)){return idle_thread;}
     else{
-		//printf("Starting!\n");
-		struct thread * e;
-		struct thread * t = idle_thread;
-		for (e = list_begin (&ready_list); e!= list_end (&ready_list); e = list_next (e)){
-			if ((e->priority)>(t->priority)){t = e;}
+		struct list_elem* e;
+		struct thread* e2;
+		struct thread* t = NULL;
+		for (e = (list_begin (&ready_list), struct thread, elem); e!= list_end (&ready_list); e = list_next(e)){
+			e2 = list_entry (list_begin (&ready_list), struct thread, elem);
 		}
-		//printf("e(%s) has priority %d\n",e->name,e->priority);
-		//list_remove(t);
-		//return t;
+		
+		
 		return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 			
-	/*
+	/*'
+	struct list_elem *e;
+  struct list_elem *t = list_begin (list);
+  for (e = list_begin (list); e != list_end (list); e = list_next (e))
+    if((e->priority) > (t->priority)){t = e;}
+  //remove t?
+  //remove t?
+  return t;
+	
+	
+	
 	      for (e = list_begin (&all_list); e != list_end (&all_list);
            e = list_next (e))
         {
