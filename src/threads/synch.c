@@ -136,6 +136,7 @@ sema_up (struct semaphore *sema)
   printf("if done\n");
   sema->value++;
   intr_set_level (old_level);
+  printf("leaving sema_up\n");
 }
 
 static void sema_test_helper (void *sema_);
