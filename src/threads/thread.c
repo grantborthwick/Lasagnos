@@ -503,8 +503,8 @@ next_thread_to_run (void)
     if (list_empty (&ready_list)){return idle_thread;}
     else{
 		printf("Starting!\n");
-		struct thread * e;
-		struct thread * t;
+		//struct thread * e;
+		//struct thread * t;
 		/*e = list_begin (&ready_list);
 		printf("e(%s) has priority %d\n",e->name,e->priority);*/
 		return list_entry (list_pop_front (&ready_list), struct thread, elem);
