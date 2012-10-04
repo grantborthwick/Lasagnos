@@ -274,6 +274,19 @@ list_pop_back (struct list *list)
   return back;
 }
 
+/* Removes the highest priority element from LIST and returns it.
+   Undefined behavior if LIST is empty before removal. */
+struct list_elem *list_pop_highest_priority (struct list *list)
+{
+  struct list_elem *e;
+  struct list_elem *t = list_begin (list);
+  for (e = list_begin (list); e != list_end (list); e = list_next (e))
+    if((e->priority) > (t->priority)){t = e;}
+  //remove t?
+  //remove t?
+  return t;
+}
+
 /* Returns the front element in LIST.
    Undefined behavior if LIST is empty. */
 struct list_elem *
