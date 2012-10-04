@@ -41,7 +41,7 @@ test_alarm_negative (void)
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
-  timer_sleep(100);
+  timer_sleep(1000);
   for (i = 0; i < 10; i++)
     sema_up (&wait_sema);
   printf("all accounted for.\n");
