@@ -250,7 +250,7 @@ thread_unblock (struct thread *t)
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
   printf("(%s - %d, %s - %d)",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority));
-  if ((thread_current ()->priority) < (t->priority)){printf(" => Should yield.\n"); /* todo thread_yield();*/}
+  if ((thread_current ()->priority) < (t->priority)){printf(" => Should yield.\n"); thread_yield();}
   else{printf(" => Did not yield\n");}
   
   struct list_elem* e;
