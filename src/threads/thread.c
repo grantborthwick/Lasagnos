@@ -249,11 +249,11 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
-  intr_set_level (old_level);
   int i = t->priority;
   int j = thread_current ()->priority;
   printf("p = %d, %d (%d, %d)\n",i,j, t->priority, thread_current ()->priority);
   if ((thread_current ()->priority) < (t->priority)){printf("Oh no\n"); thread_yield(); printf("Done yielding!\n");}
+  intr_set_level (old_level);
 }
 
 /* Returns the name of the running thread. */
