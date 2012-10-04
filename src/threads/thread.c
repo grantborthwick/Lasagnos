@@ -251,15 +251,15 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
-  printf("(%s - %d, %s - %d)",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority));
-  if ((thread_current ()->priority) < (t->priority)){printf(" => Should yield.\n"); /*thread_yield();*/ printf("Back.\n");}
-  else{printf(" => Did not yield\n");}
+  //printf("(%s - %d, %s - %d)",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority));
+  if ((thread_current ()->priority) < (t->priority)){/*printf(" => Should yield.\n");*/ /*thread_yield();*/ /*printf("Back.\n");*/}
+  else{/*printf(" => Did not yield\n");*/}
   struct list_elem* e;
   struct list_elem* u;
   struct thread* e2;
   struct thread* u2 = NULL;
-  printf("start\n");
-  if (!list_empty (&ready_list)){
+  //printf("start\n");
+  /*if (!list_empty (&ready_list)){
   for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
 	e = list_next(e))
 	{
@@ -273,10 +273,10 @@ thread_unblock (struct thread *t)
 	}
     printf("%s has highest with %d\n\n",u2->name,u2->priority);
 	}
-	else{printf("Empty!");}
+  else{printf("Empty!");}*/
   
   intr_set_level (old_level);
-  printf("leaving unblock.\n");
+  //printf("leaving unblock.\n");
 }
 
 /* Returns the name of the running thread. */
