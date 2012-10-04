@@ -500,9 +500,9 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
-    if (list_empty (&ready_list))
-		return idle_thread;
+    if (list_empty (&ready_list)){return idle_thread;}
     else{
+		printf("Starting!\n");
 		struct thread * e;
 		struct thread * t;
 		e = list_begin (&ready_list);
