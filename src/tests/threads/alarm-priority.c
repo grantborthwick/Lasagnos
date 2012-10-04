@@ -31,7 +31,7 @@ test_alarm_priority (void)
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
-
+  printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   thread_set_priority (PRI_MIN);
 
   for (i = 0; i < 10; i++)
