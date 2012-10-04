@@ -36,6 +36,7 @@ test_alarm_priority (void)
   printf("I am the lowest thread. (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   for (i = 0; i < 10; i++)
     sema_down (&wait_sema);
+  printf("all accounted for.\n");
 }
 
 static void
