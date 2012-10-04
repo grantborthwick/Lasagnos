@@ -251,31 +251,12 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
-  printf("(%s - %d, %s - %d)",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority));
-  if ((thread_current () == idle_thread) || (thread_current ()->priority) < (t->priority)){printf(" => Should yield.\n"); /*thread_yield();*/ /*printf("Back.\n");*/}
-  else{printf(" => Did not yield\n");}
-  /*struct list_elem* e;
-  struct list_elem* u;
-  struct thread* e2;
-  struct thread* u2 = NULL;*/
-  //printf("start\n");
-  /*if (!list_empty (&ready_list)){
-  for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
-	e = list_next(e))
-	{
-		e2 = list_entry (list_begin (&ready_list), struct thread, elem);
-		if (u2==NULL||(e2->priority)>(u2->priority)){
-			u = e;
-			u2 = e2;
-			printf("!!");
-		}
-		//printf("%s - %d\n",u2->name,u2->priority);
-	}
-    //printf("%s has highest with %d\n\n",u2->name,u2->priority);
-	}
-  else{printf("Empty!");}*/
   
   intr_set_level (old_level);
+  if ((thread_current () != idle_thread) && (thread_current ()->priority) < (t->priority))
+  { 
+    thread_yield();
+  }
 }
 
 /* Returns the name of the running thread. */
@@ -338,7 +319,6 @@ void
 thread_yield (void) 
 {
       struct thread *cur = thread_current ();
-	  //printf("(%d)%s - Yielding!\n",(cur->priority),(cur->name));
       enum intr_level old_level;
       
       ASSERT (!intr_context ());
@@ -346,11 +326,9 @@ thread_yield (void)
       old_level = intr_disable ();
       if (cur != idle_thread) 
         list_push_back (&ready_list, &cur->elem);
-	  //printf("Before schedule\n");
       cur->status = THREAD_READY;
       schedule ();
       intr_set_level (old_level);
-	  //printf("(%d)%s is back from the dead.\n",(cur->priority),(cur->name));
 }
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
@@ -531,7 +509,7 @@ next_thread_to_run (void)
     if (list_empty (&ready_list)){return idle_thread;}
     else{
 		struct list_elem* e;
-		struct list_elem* t;
+		struct list_elem* t = NULL;
 		struct thread* e2;
 		struct thread* t2 = NULL;
 		for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
@@ -543,8 +521,9 @@ next_thread_to_run (void)
 				t2 = e2;
 			}
 		}
-		list_remove(t);
-		return t2;
+		if( t!= NULL){list_remove(t);return t2;}
+		printf("uh oh......\n");
+		return idle_thread;
 		//return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 }
