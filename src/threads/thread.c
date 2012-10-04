@@ -546,7 +546,7 @@ next_thread_to_run (void)
 		}
 		list_remove(t);
 		return t2;*/
-		//return list_entry (list_pop_front (&ready_list), struct thread, elem);
+		return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 }
 
