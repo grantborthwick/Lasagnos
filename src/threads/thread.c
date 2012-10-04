@@ -510,7 +510,7 @@ next_thread_to_run (void)
 			 e!= list_end (&ready_list); 
 		     e = list_next(e))
 		{
-			//e2 = list_entry (list_begin (&ready_list), struct thread, elem);
+			e2 = list_entry (list_begin (&ready_list), struct thread, elem);
 		}
 		
 		
