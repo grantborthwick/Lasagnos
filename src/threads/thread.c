@@ -535,7 +535,7 @@ next_thread_to_run (void)
 		struct list_elem* t;
 		struct thread* e2;
 		struct thread* t2 = NULL;
-		/*for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
+		for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
 		     e = list_next(e))
 		{
 			e2 = list_entry (list_begin (&ready_list), struct thread, elem);
@@ -545,8 +545,8 @@ next_thread_to_run (void)
 			}
 		}
 		list_remove(t);
-		return t2;*/
-		return list_entry (list_pop_front (&ready_list), struct thread, elem);
+		return t2;
+		//return list_entry (list_pop_front (&ready_list), struct thread, elem);
 	}
 }
 
