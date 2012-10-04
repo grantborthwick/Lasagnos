@@ -509,8 +509,8 @@ next_thread_to_run (void)
 		int i = 0;
 		for (e = (list_begin (&ready_list); 
 			 //e!= list_end (&ready_list); 
-			 ++i;
-		     e = list_next(e))
+			 i>=0;
+		     ++i
 		{
 			//e2 = list_entry (list_begin (&ready_list), struct thread, elem);
 		}
