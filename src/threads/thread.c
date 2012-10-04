@@ -339,7 +339,7 @@ void
 thread_yield (void) 
 {
       struct thread *cur = thread_current ();
-	  printf("(%d)%s - Yielding!\n",(cur->priority),(cur->name));
+	  //printf("(%d)%s - Yielding!\n",(cur->priority),(cur->name));
       enum intr_level old_level;
       
       ASSERT (!intr_context ());
@@ -347,11 +347,11 @@ thread_yield (void)
       old_level = intr_disable ();
       if (cur != idle_thread) 
         list_push_back (&ready_list, &cur->elem);
-	  printf("Before schedule\n");
+	  //printf("Before schedule\n");
       cur->status = THREAD_READY;
       schedule ();
       intr_set_level (old_level);
-	  printf("(%d)%s is back from the dead.\n",(cur->priority),(cur->name));
+	  //printf("(%d)%s is back from the dead.\n",(cur->priority),(cur->name));
 }
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
