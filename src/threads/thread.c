@@ -271,6 +271,7 @@ thread_unblock (struct thread *t)
     printf("%s has highest with %d\n\n",u2->name,u2->priority);*/
   
   intr_set_level (old_level);
+  printf("leaving unblock.\n");
 }
 
 /* Returns the name of the running thread. */
