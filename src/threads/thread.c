@@ -516,7 +516,6 @@ next_thread_to_run (void)
 			}
 		}
 		list_remove(t);
-		printf("aaaaa\n");
 		return t2;
 	}
 }
@@ -580,7 +579,7 @@ schedule (void)
       struct thread *cur = running_thread ();
       struct thread *next = next_thread_to_run ();
       struct thread *prev = NULL;
-
+	  printf("does it work\n");
       ASSERT (intr_get_level () == INTR_OFF);
       ASSERT (cur->status != THREAD_RUNNING);
       ASSERT (is_thread (next));
