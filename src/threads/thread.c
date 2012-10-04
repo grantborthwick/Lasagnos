@@ -209,6 +209,7 @@ thread_create (const char *name, int priority,
   intr_set_level (old_level);
 
   /* Add to run queue. */
+  printf("unblocking (%d)%s\n",(t->priority),(t->name));
   thread_unblock (t);
 
   return tid;
@@ -426,8 +427,8 @@ thread_get_recent_cpu (void)
 static void
 idle (void *idle_started_ UNUSED) 
 {
-	  if (!list_empty (&ready_list)){printf("actual idle.......\n");}
-	  else{printf("fake idle.....\n");}
+	  /*if (!list_empty (&ready_list)){printf("actual idle.......\n");}
+	  else{printf("fake idle.....\n");}*/
       struct semaphore *idle_started = idle_started_;
       idle_thread = thread_current ();
       sema_up (idle_started);
