@@ -252,7 +252,7 @@ thread_unblock (struct thread *t)
   printf("(%s - %d, %s - %d)\n",(thread_current ()->name), (thread_current ()->priority),(t->name),(t->priority));
   if ((thread_current ()->priority) < (t->priority)){printf(" => Should yield.\n"); /*thread_yield();*/}
   else{printf(" => Did not yield\n");}
-  intr_set_level (old_level)
+  intr_set_level (old_level);
 }
 
 /* Returns the name of the running thread. */
