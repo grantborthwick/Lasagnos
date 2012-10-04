@@ -249,10 +249,8 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
-  int i = t->priority;
-  int j = thread_current ()->priority;
-  printf("p = %d, %d (%d, %d)\n",i,j, t->priority, thread_current ()->priority);
-  if ((thread_current ()->priority) < (t->priority)){printf("Oh no\n"); thread_yield(); printf("Done yielding!\n");}
+  if ((thread_current ()->priority) < (t->priority)){printf("Should yield(%d,%d)\n",(thread_current ()->priority),(t->priority)); /*thread_yield();*/}
+  else{printf("Did not yield\n");}
   intr_set_level (old_level);
 }
 
