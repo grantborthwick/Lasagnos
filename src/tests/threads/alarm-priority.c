@@ -26,7 +26,7 @@ test_alarm_priority (void)
   
   for (i = 0; i < 10; i++) 
     {
-      int priority = PRI_DEFAULT - (i + 5) % 10 - 1;
+      int priority = PRI_DEFAULT - (i + 5) % 10 - 10;
       char name[16];
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
