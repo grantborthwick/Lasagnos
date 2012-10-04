@@ -257,6 +257,7 @@ thread_unblock (struct thread *t)
   struct list_elem* u;
   struct thread* e2;
   struct thread* u2 = NULL;
+  printf("start\n");
   for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
 	e = list_next(e))
 	{
@@ -268,7 +269,7 @@ thread_unblock (struct thread *t)
 		}
 		printf("%s - %d\n",u2->name,u2->priority);
 	}
-    printf("\n%s has highest with %d\n",u2->name,u2->priority);
+    printf("%s has highest with %d\n\n",u2->name,u2->priority);
   
   intr_set_level (old_level);
 }
