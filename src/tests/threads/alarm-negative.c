@@ -34,7 +34,7 @@ test_alarm_negative (void)
   printf("starter! (%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
   thread_set_priority (PRI_MIN);*/
   printf("I am the lowest thread. Now I start some more!(%d)%s\n",(thread_current ()->priority),(thread_current ()->name)); 
-  for (i = 10; i > 10; --i) 
+  for (i = 1; i < 10; i++) 
     {
       int priority = PRI_DEFAULT + (i + 5) % 10 - 1; //definitely weird order and sema down before others.
       char name[16];
@@ -52,7 +52,7 @@ alarm_priority_thread (void *aux UNUSED)
   
   sema_down (&wait_sema);
   /* Print a message on wake-up. */
-  msg ("Thread %s woke up.", thread_name ());
+  printf ("Thread %s woke up.", thread_name ());
 
   sema_up (&wait_sema);
 }
