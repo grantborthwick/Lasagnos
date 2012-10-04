@@ -343,8 +343,10 @@ thread_yield (void)
       if (cur != idle_thread) 
         list_push_back (&ready_list, &cur->elem);
       cur->status = THREAD_READY;
+	  printf("Before schedule\n");
       schedule ();
       intr_set_level (old_level);
+	  printf("I'm back from the dead.\n");
 }
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
