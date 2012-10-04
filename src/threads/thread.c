@@ -503,11 +503,14 @@ next_thread_to_run (void)
     if (list_empty (&ready_list)){return idle_thread;}
     else{
 		struct list_elem* e;
+		struct list_elem* t;
 		struct thread* e2;
-		struct thread* t = NULL;
-		/*for (e = (list_begin (&ready_list); e!= list_end (&ready_list); e = list_next(e)){
-			e2 = list_entry (list_begin (&ready_list), struct thread, elem);
-		}*/
+		struct thread* t2 = NULL;
+		for (e = (list_begin (&ready_list); e!= list_end (&ready_list); 
+		       e = list_next(e))
+		{
+			//e2 = list_entry (list_begin (&ready_list), struct thread, elem);
+		}
 		
 		
 		
