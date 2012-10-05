@@ -222,13 +222,27 @@ lock_init (struct lock *lock)
 void
 lock_acquire (struct lock *lock)
 {
+  enum intr_level old_level;
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
-
+  if ((lock->holder)!= NULL){
+    thread_current ()->want_lock = lock;
+    struct thread* donee = lock->holder;
+    thread_current ()->donee = donee;
+    list_push_front(&donee->benefactors, thread_current ());
+  }
+  //thread_recompute_priority(thread_current ()->donee);
+   
   sema_down (&lock->semaphore);
+  
+  //old_level = intr_disable ();
+  //list_remove(
+  //thread_recompute_priority(thread_current ()->donee);
+  thread_current ()->donee = NULL;
+  thread_current ()->want_lock = NULL;
   lock->holder = thread_current ();
-  //list_push_front(&(thread_current ()->locks), lock);
+  //intr_set_level (old_level);
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
