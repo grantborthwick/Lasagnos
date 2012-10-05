@@ -228,8 +228,6 @@ lock_acquire (struct lock *lock)
 
   sema_down (&lock->semaphore);
   lock->holder = thread_current ();
-  list_push_front(&(thread_current ()->locks), lock);
-  lock->location = list_front(&(thread_current ()->locks));
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -249,8 +247,6 @@ lock_try_acquire (struct lock *lock)
   success = sema_try_down (&lock->semaphore);
   if (success)
     lock->holder = thread_current ();
-	list_push_front(&(thread_current ()->locks), lock);
-	lock->location = list_front(&(thread_current ()->locks));
   return success;
 }
 
@@ -264,10 +260,9 @@ lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-  list_remove(lock->location);
+
   lock->holder = NULL;
   sema_up (&lock->semaphore);
-  //todo check if higher priority thread exists.
 }
 
 /* Returns true if the current thread holds LOCK, false
