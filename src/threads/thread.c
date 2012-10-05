@@ -258,6 +258,22 @@ thread_unblock (struct thread *t)
     thread_yield();
   }
 }
+/* Releases a lock. */
+void thread_release_lock (struct lock* l)
+{
+	//printf("taking out of wait\n");
+	struct lock* e;
+	struct thread* e2;
+	/*for (e = (list_begin (&(thread_current ()->locks))); e!= list_end (&(thread_current ()->locks)); 
+	     e = list_next(e))
+	{
+		//e2 = list_entry (e, struct lock, locks);
+		if (e == l){
+			list_remove(e);
+			break;
+		}
+	}*/
+}
 
 /* Returns the name of the running thread. */
 const char *
@@ -500,10 +516,9 @@ init_thread (struct thread *t, const char *name, int priority)
       t->stack = (uint8_t *) t + PGSIZE;
       t->priority = priority;
       t->magic = THREAD_MAGIC;
+	  list_init(&t->locks);
       list_push_back (&all_list, &t->allelem);
       sema_init(&t->sema_wakeup, 0);
-	  
-  
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
