@@ -31,9 +31,9 @@ struct list_elem timer_list_elem;   //List element to attach to thread_list
 A2:
     Within timer_sleep, the number of ticks is captured into a local variable, and the current thread is assigned to a local variable "t".  "t"'s wakeup time is then set to the current # of ticks plus the requested sleep time.  
 
-    Interupts are then disabled, and "t" is inserted into the list of sleeping threads (thread_list).  Interupts are re-enabled, and the thread's semaphore is lowered, yielding the thread to the next one in the queue.  
+    interrupts are then disabled, and "t" is inserted into the list of sleeping threads (thread_list).  interrupts are re-enabled, and the thread's semaphore is lowered, yielding the thread to the next one in the queue.  
 
-    If the timer interupt handler is called, as long as the thread_list is not being modified, it will have no effect on the operation.  The timer_interupt increments the number of system ticks, then checks to see if any threads are ready to be woken up.  If the list is not empty, timer_interupt loops through the list, waking up all threads whose wakeup_time is <= to the current time.  These threads are then removed from the list. 
+    If the timer interrupt handler is called, as long as the thread_list is not being modified, it will have no effect on the operation.  The timer_interrupt increments the number of system ticks, then checks to see if any threads are ready to be woken up.  If the list is not empty, timer_interrupt loops through the list, waking up all threads whose wakeup_time is <= to the current time.  These threads are then removed from the list. 
 
 A3:
    Once the ticks are incremented, the handler checks to see if any threads are asleep, if not it exits immeditely.  If the list is not empty, the handler checks to see if the first element is ready to be woken up, if not it exits.  Since the elements are sorted by time, the first element will always be the one that is ready to be woken up next.    
@@ -44,17 +44,17 @@ A3:
 >> timer_sleep() simultaneously?
 
 >> A4: 
-    The only time a global variable is updated, interupts are disabled.  All other actions can be safely interupted, as only local variables will be updated.  
+    The only time a global variable is updated, interrupts are disabled.  All other actions can be safely interrupted, as only local variables will be updated.  
 
 >> A5: How are race conditions avoided when a timer interrupt occurs
 >> during a call to timer_sleep()?
 
-    Race conditions are avoided in the same way as A4 above, by protecting all code that updates global variables.  However, there is a possibility of a race condition if timer_interupt runs between the list_insert and sema_down.  Since, though, sema_down will yield the thread to the next availble thread, instablility will be introduced into the system if interupts are disabled when sema_down is called.  This error will only be possible if timer_sleep(0) is called, though, which is unlikely.  
+    Race conditions are avoided in the same way as A4 above, by protecting all code that updates global variables.  However, there is a possibility of a race condition if timer_interrupt runs between the list_insert and sema_down.  Since, though, sema_down will yield the thread to the next availble thread, instablility will be introduced into the system if interrupts are disabled when sema_down is called.  This error will only be possible if timer_sleep(0) is called, though, which is unlikely.  
      
 
 ---- RATIONALE ----
 
-This design has little busy waiting, and efficently sorts the threads for the interupt handler function.  Unlike other implementations, it allows very little room for race conditions, with the exception of timer_sleep(0) above.  
+This design has little busy waiting, and efficently sorts the threads for the interrupt handler function.  Unlike other implementations, it allows very little room for race conditions, with the exception of timer_sleep(0) above.  
 
 
              PRIORITY SCHEDULING
