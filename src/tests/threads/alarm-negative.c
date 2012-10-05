@@ -25,7 +25,7 @@ test_alarm_negative (void)
   wake_time = timer_ticks () + 5 * TIMER_FREQ;
   sema_init (&wait_sema, 0);
   for (i = 27; i<37; ++i){
-    ++j;
+    ++j; ++j;
     char name[16];
     snprintf (name, sizeof name, "priority %d", i-20);
 	thread_create(name,i-20, alarm_priority_thread, NULL);
