@@ -259,12 +259,12 @@ thread_unblock (struct thread *t)
   }
 }
 /* Releases a lock. */
-void thread_release_lock (struct lock* l)
+/*void thread_release_lock (struct lock* l)
 {
 	//printf("taking out of wait\n");
-	struct lock* e;
-	struct thread* e2;
-	/*for (e = (list_begin (&(thread_current ()->locks))); e!= list_end (&(thread_current ()->locks)); 
+	//struct lock* e;
+	//struct thread* e2;
+	for (e = (list_begin (&(thread_current ()->locks))); e!= list_end (&(thread_current ()->locks)); 
 	     e = list_next(e))
 	{
 		//e2 = list_entry (e, struct lock, locks);
@@ -272,8 +272,8 @@ void thread_release_lock (struct lock* l)
 			list_remove(e);
 			break;
 		}
-	}*/
-}
+	}
+}*/
 
 /* Returns the name of the running thread. */
 const char *
@@ -515,6 +515,7 @@ init_thread (struct thread *t, const char *name, int priority)
       strlcpy (t->name, name, sizeof t->name);
       t->stack = (uint8_t *) t + PGSIZE;
       t->priority = priority;
+      t->original_priority = priority;
       t->magic = THREAD_MAGIC;
 	  list_init(&t->benefactors);
       list_push_back (&all_list, &t->allelem);

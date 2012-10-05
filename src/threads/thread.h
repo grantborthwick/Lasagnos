@@ -89,6 +89,7 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+    int original_priority;              /* Base level thread priority */
     struct list_elem allelem;           /* List element for all threads list. */
     int64_t wakeup_time;
     struct semaphore sema_wakeup;
@@ -96,6 +97,8 @@ struct thread
     struct list_elem elem;              /* List element. */
     struct list_elem timer_list_elem;
 	struct list benefactors;
+	struct thread* donee;
+	struct lock* want_lock;
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

@@ -253,10 +253,26 @@ thread_unblock (struct thread *t)
   t->status = THREAD_READY;
   
   intr_set_level (old_level);
-  if ((thread_current () != idle_thread) && (thread_current ()->priority)-1 < (t->priority))
+  if ((thread_current () != idle_thread) && (thread_current ()->priority) < (t->priority))
   { 
     thread_yield();
   }
+}
+/* Releases a lock. */
+/*void thread_release_lock (struct lock* l)
+{
+	//printf("taking out of wait\n");
+	//struct lock* e;
+	//struct thread* e2;
+	for (e = (list_begin (&(thread_current ()->locks))); e!= list_end (&(thread_current ()->locks)); 
+	     e = list_next(e))
+	{
+		//e2 = list_entry (e, struct lock, locks);
+		if (e == l){
+			list_remove(e);
+			break;
+		}
+	}*/
 }
 
 /* Returns the name of the running thread. */
@@ -331,6 +347,24 @@ thread_yield (void)
       intr_set_level (old_level);
 }
 
+
+void thread_check_yield ()
+{
+	struct list_elem* e;
+	struct thread* e2;
+	bool y = false;
+	for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
+	     e = list_next(e))
+	{
+		e2 = list_entry (e, struct thread, elem);
+		if ((e2->priority) >(thread_current ()->priority)){
+			y = true;
+			break;
+		}
+	}
+	if (y){thread_yield();}
+}
+
 /* Invoke function 'func' on all threads, passing along 'aux'.
    This function must be called with interrupts off. */
 void
@@ -352,14 +386,16 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-        thread_current ()->priority = new_priority;
+    thread_current ()->priority = new_priority;
+	thread_check_yield ();
 }
 
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void) 
 {
-    return thread_current ()->priority;
+	//todo recursive with list or number check
+    return thread_current ()->priority; 
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -479,10 +515,11 @@ init_thread (struct thread *t, const char *name, int priority)
       strlcpy (t->name, name, sizeof t->name);
       t->stack = (uint8_t *) t + PGSIZE;
       t->priority = priority;
+      t->original_priority = priority;
       t->magic = THREAD_MAGIC;
+	  list_init(&t->benefactors);
       list_push_back (&all_list, &t->allelem);
       sema_init(&t->sema_wakeup, 0);
-  
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
