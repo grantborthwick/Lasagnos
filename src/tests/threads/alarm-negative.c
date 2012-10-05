@@ -28,8 +28,9 @@ test_alarm_negative (void)
     ++j;
     char name[16];
     snprintf (name, sizeof name, "priority %d", i);
+	
+	thread_create(name,i-20, alarm_priority_thread, NULL);
     thread_create(name,i, alarm_priority_thread, NULL);
-    thread_yield();
   }
   
   
@@ -64,7 +65,7 @@ alarm_priority_thread (void *aux UNUSED)
 {
   
   //sema_down (&wait_sema);
-  printf ("Thread %s here!.\n", thread_name ());
+  printf ("(%d)Thread %s here!.\n", (thread_current ()->priority) , thread_name ());
   sema_up(&wait_sema);
 
   //sema_up (&wait_sema);
