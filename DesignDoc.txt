@@ -2,8 +2,8 @@ CIS 520 - Programming Project #1
                    
 ---- GROUP ----
 
-Benjamin Kuestersteffen <bkuester@ksu.edu
-<Grant>
+Benjamin Kuestersteffen <bkuester@ksu.edu>
+Grant Borthwick <durge@ksu.edu>
 
 ...
 
