@@ -370,7 +370,6 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-	//todo check if lower than any ready thread.
     thread_current ()->priority = new_priority;
 	thread_check_yield ();
 }
@@ -380,7 +379,7 @@ int
 thread_get_priority (void) 
 {
 	//todo recursive with list or number check
-    return thread_current ()->priority;
+    return thread_current ()->priority; 
 }
 
 /* Sets the current thread's nice value to NICE. */
