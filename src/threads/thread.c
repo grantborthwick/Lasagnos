@@ -331,6 +331,24 @@ thread_yield (void)
       intr_set_level (old_level);
 }
 
+
+void thread_check_yield ()
+{
+	struct list_elem* e;
+	struct thread* e2;
+	bool y = false;
+	for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
+	     e = list_next(e))
+	{
+		e2 = list_entry (e, struct thread, elem);
+		if ((e2->priority) >(thread_current ()->priority)){
+			y = true;
+			break;
+		}
+	}
+	if (y){thread_yield();}
+}
+
 /* Invoke function 'func' on all threads, passing along 'aux'.
    This function must be called with interrupts off. */
 void
@@ -354,19 +372,7 @@ thread_set_priority (int new_priority)
 {
 	//todo check if lower than any ready thread.
     thread_current ()->priority = new_priority;
-	struct list_elem* e;
-	struct thread* e2;
-	bool y = false;
-	for (e = (list_begin (&ready_list)); e!= list_end (&ready_list); 
-	     e = list_next(e))
-	{
-		e2 = list_entry (e, struct thread, elem);
-		if ((e2->priority) >(thread_current ()->priority)){
-			y = true;
-			break;
-		}
-	}
-	if (y){thread_yield();}
+	thread_check_yield ();
 }
 
 /* Returns the current thread's priority. */
