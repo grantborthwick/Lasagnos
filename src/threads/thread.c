@@ -379,14 +379,13 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
-	/*struct list_elem *e;
+	struct list_elem *e = list_begin (&(thread_current ()->benefactors));
     struct thread * t;
-    for (e = list_begin (&); e != list_end (&);
-        e = list_next (e))
+    while(e != list_end(&(thread_current ()->benefactors)))
     {
         struct thread *t = list_entry (e, struct thread, allelem);
-        func (t, aux);
-    }*/
+        e = list_next (e);
+    }
     return thread_current ()->priority; 
 }
 

@@ -286,7 +286,7 @@ lock_release (struct lock *lock)
 	  if ((t->want_lock) == lock){e = list_remove(e);}
 	  else{e = list_next(e);}
   }
-  
+  thread_get_priority();
   sema_up (&lock->semaphore);
 }
 

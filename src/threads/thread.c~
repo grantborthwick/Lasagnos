@@ -370,7 +370,7 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-    thread_current ()->origional_priority = new_priority;
+    thread_current ()->original_priority = new_priority;
     thread_get_priority();
 	thread_check_yield ();
 }
@@ -379,14 +379,15 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
-	/*struct list_elem *e;
+	struct list_elem *e = list_begin (&(thread_current ()->benefactors))
     struct thread * t;
-    for (e = list_begin (&); e != list_end (&);
+    for (e = ; e != list_end (&);
         e = list_next (e))
+    while(e != list_end(&(thread_current ()->benefactors)))
     {
         struct thread *t = list_entry (e, struct thread, allelem);
         func (t, aux);
-    }*/
+    }
     return thread_current ()->priority; 
 }
 
