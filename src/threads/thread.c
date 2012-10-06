@@ -258,22 +258,6 @@ thread_unblock (struct thread *t)
     thread_yield();
   }
 }
-/* Releases a lock. */
-/*void thread_release_lock (struct lock* l)
-{
-	//printf("taking out of wait\n");
-	//struct lock* e;
-	//struct thread* e2;
-	for (e = (list_begin (&(thread_current ()->locks))); e!= list_end (&(thread_current ()->locks)); 
-	     e = list_next(e))
-	{
-		//e2 = list_entry (e, struct lock, locks);
-		if (e == l){
-			list_remove(e);
-			break;
-		}
-	}
-}*/
 
 /* Returns the name of the running thread. */
 const char *
