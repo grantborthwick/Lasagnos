@@ -370,7 +370,8 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-    thread_current ()->priority = new_priority;
+    thread_current ()->original_priority = new_priority;
+    thread_get_priority();
 	thread_check_yield ();
 }
 
@@ -378,7 +379,14 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
-	//todo recursive with list or number check
+	/*struct list_elem *e;
+    struct thread * t;
+    for (e = list_begin (&); e != list_end (&);
+        e = list_next (e))
+    {
+        struct thread *t = list_entry (e, struct thread, allelem);
+        func (t, aux);
+    }*/
     return thread_current ()->priority; 
 }
 

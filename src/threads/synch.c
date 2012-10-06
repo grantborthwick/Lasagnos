@@ -118,17 +118,15 @@ sema_up (struct semaphore *sema)
 	struct list_elem* t;
 	struct thread* e2;
 	struct thread* t2 = NULL;
-	//printf("1. [");
 	for (e = (list_begin (&(sema->waiters))); e!= list_end (&(sema->waiters)); 
 	    e = list_next(e))
 	{
 		e2 = list_entry (e, struct thread, elem);
-		//printf("(%d)%s\n",(e2->priority),(e2->name));
 		if (t2==NULL||(e2->priority)>(t2->priority)){
 			t = e;
 			t2 = e2;
-		}
-	}
+	    }
+  }
 	list_remove(t);
 	for (e = (list_begin (&(sema->waiters))); e!= list_end (&(sema->waiters)); 
 	    e = list_next(e))
@@ -236,6 +234,15 @@ lock_acquire (struct lock *lock)
   thread_current ()->donee = NULL;
   thread_current ()->want_lock = NULL;
   lock->holder = thread_current ();
+  struct list_elem *e = list_begin (&((lock->semaphore).waiters));
+  struct thread * t;
+  while (e != list_end (&((lock->semaphore).waiters)))
+  {
+    if (e!= NULL){list_push_front(&(thread_current ()->benefactors),e);}
+    e = list_next(e);
+  }
+  thread_get_priority();
+  
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -279,6 +286,7 @@ lock_release (struct lock *lock)
 	  if ((t->want_lock) == lock){e = list_remove(e);}
 	  else{e = list_next(e);}
   }
+  
   sema_up (&lock->semaphore);
 }
 
