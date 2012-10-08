@@ -31,7 +31,9 @@ test_alarm_priority (void)
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, alarm_priority_thread, NULL);
     }
+
   thread_set_priority (PRI_MIN);
+
   for (i = 0; i < 10; i++)
     sema_down (&wait_sema);
 }
@@ -43,6 +45,7 @@ alarm_priority_thread (void *aux UNUSED)
   int64_t start_time = timer_ticks ();
   while (timer_elapsed (start_time) == 0)
     continue;
+
   /* Now we know we're at the very beginning of a timer tick, so
      we can call timer_sleep() without worrying about races
      between checking the time and a timer interrupt. */

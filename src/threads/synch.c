@@ -118,18 +118,15 @@ sema_up (struct semaphore *sema)
 	struct list_elem* t;
 	struct thread* e2;
 	struct thread* t2 = NULL;
-	//printf("1. [");
 	for (e = (list_begin (&(sema->waiters))); e!= list_end (&(sema->waiters)); 
 	    e = list_next(e))
 	{
 		e2 = list_entry (e, struct thread, elem);
-		//printf("(%d)%s\n",(e2->priority),(e2->name));
 		if (t2==NULL||(e2->priority)>(t2->priority)){
 			t = e;
 			t2 = e2;
-		}
-	}
-	//printf("]\nremove (%d)%s\n2. [",(t2->priority),(t2->name));
+	    }
+  }
 	list_remove(t);
 	for (e = (list_begin (&(sema->waiters))); e!= list_end (&(sema->waiters)); 
 	    e = list_next(e))
@@ -225,9 +222,27 @@ lock_acquire (struct lock *lock)
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
-
+  thread_current ()->want_lock = lock;
+  if ((lock->holder)!= NULL){
+    struct thread* donee = lock->holder;
+    thread_current ()->donee = donee;
+    list_push_front(&donee->benefactors, &thread_current ()->elem);
+  }
+   
   sema_down (&lock->semaphore);
+  //threads clear benefactors as they get rid of lock!
+  thread_current ()->donee = NULL;
+  thread_current ()->want_lock = NULL;
   lock->holder = thread_current ();
+  struct list_elem *e = list_begin (&((lock->semaphore).waiters));
+  struct thread * t;
+  while (e != list_end (&((lock->semaphore).waiters)))
+  {
+    if (e!= NULL){list_push_front(&(thread_current ()->benefactors),e);}
+    e = list_next(e);
+  }
+  thread_get_priority();
+  
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -245,8 +260,9 @@ lock_try_acquire (struct lock *lock)
   ASSERT (!lock_held_by_current_thread (lock));
 
   success = sema_try_down (&lock->semaphore);
-  if (success)
+  if (success){
     lock->holder = thread_current ();
+  }
   return success;
 }
 
@@ -260,8 +276,17 @@ lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-
+  //thread_release_lock(lock);
   lock->holder = NULL;
+  struct list_elem * e = (list_begin (&(thread_current ()->benefactors)));
+  struct thread * t;
+  while (e!= list_end (&(thread_current ()->benefactors)))
+  {
+      t = list_entry (e, struct thread, elem);
+	  if ((t->want_lock) == lock){e = list_remove(e);}
+	  else{e = list_next(e);}
+  }
+  thread_get_priority();
   sema_up (&lock->semaphore);
 }
 
