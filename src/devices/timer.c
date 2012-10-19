@@ -29,14 +29,6 @@ static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
-static struct list thread_list;
-
-static bool compare_threads_by_wakeup_time(const struct list_elem *a_, const struct list_elem *b_, void *aux UNUSED)
-{
-  const struct thread *a = list_entry(a_, struct thread, timer_list_elem);
-  const struct thread *b = list_entry(b_, struct thread, timer_list_elem);
-  return a->wakeup_time < b->wakeup_time;
-}
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
@@ -45,7 +37,6 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
-  list_init(&thread_list);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -99,12 +90,10 @@ void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
-  struct thread *t = thread_current();
-  t->wakeup_time = ticks + start;
-  intr_disable();
-  list_insert_ordered(&thread_list, &t->timer_list_elem, compare_threads_by_wakeup_time,NULL);
-  intr_enable();
-  sema_down(&t->sema_wakeup);
+
+  ASSERT (intr_get_level () == INTR_ON);
+  while (timer_elapsed (start) < ticks) 
+    thread_yield ();
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -183,16 +172,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
-  //printf("Interupting\n");
-  //Check to see if first element in list is ready to start
-  while (!list_empty(&thread_list))
-  {
-    struct thread *head = list_entry(list_front(&thread_list),struct thread, timer_list_elem);
-    if (ticks < head->wakeup_time) break;
-    sema_up(&head->sema_wakeup);
-    //thread_yield();
-    list_pop_front(&thread_list);
-  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
@@ -255,8 +234,6 @@ real_time_sleep (int64_t num, int32_t denom)
       real_time_delay (num, denom); 
     }
 }
-
-
 
 /* Busy-wait for approximately NUM/DENOM seconds. */
 static void
