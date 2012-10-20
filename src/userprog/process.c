@@ -552,13 +552,23 @@ init_cmd_line (uint8_t *kpage, uint8_t *upage, const char *cmd_line,
   int argc;
   char **argv;
 
+
+
+// OLD CODE BELOW!!! _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+
   /* Push a temporary working copy of the command line string. */
+  //gives us a pointer to the bottom of the stack
   cmd_line_copy = push (kpage, &ofs, cmd_line, strlen (cmd_line) + 1);
   if (cmd_line_copy == NULL)
     return false;
 
+printf("Pushing: %s to %s\n",cmd_line, cmd_line_copy);
+	
   if (push (kpage, &ofs, &null, sizeof null) == NULL)
     return false;
+
+printf("Pushing NULL\n");
 
   /* Parse the working copy of the command line into arguments
      and push them in reverse order. */
@@ -566,10 +576,12 @@ init_cmd_line (uint8_t *kpage, uint8_t *upage, const char *cmd_line,
   for (karg = strtok_r (cmd_line_copy, " ", &saveptr); karg != NULL;
        karg = strtok_r (NULL, " ", &saveptr))
     {
+	  // translates pointer from kernel space to user space
       void *uarg = upage + (karg - (char *) kpage);
       if (push (kpage, &ofs, &uarg, sizeof uarg) == NULL)
         return false;
       argc++;
+printf("Pushing = %s\n", karg);
     }
 
   /* Reverse the order of the command line arguments. */
@@ -582,8 +594,9 @@ init_cmd_line (uint8_t *kpage, uint8_t *upage, const char *cmd_line,
       || push (kpage, &ofs, &null, sizeof null) == NULL)
     return false;
 
+printf("upage: %u\n",upage);
   /* Set initial stack pointer. */
-  *esp = upage + ofs;
+  *esp = upage + ofs - 12;
   return true;
 }
 
