@@ -150,10 +150,6 @@ process_wait (tid_t child_tid)
   
   sema_down(&(t->dead));
   list_remove(e);
-  //sema_up(&(t->dead));
-  
-  //int temp = t->exit_code;
-  //t->exit_code = -1;
   return t->exit_code;
 }
 
