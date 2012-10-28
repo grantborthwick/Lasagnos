@@ -366,7 +366,7 @@ sys_write (int handle, void *usrc_, unsigned size)
 static int
 sys_seek (int handle, unsigned position) 
 {
-  fd = lookup_fd (handle);
+  struct file_descriptor * fd = lookup_fd (handle);
   if (fd!= NULL){
 	  lock_acquire (&fs_lock);
 	  file_seek(fd->file, position);
@@ -379,7 +379,7 @@ sys_seek (int handle, unsigned position)
 static int
 sys_tell (int handle) 
 {
-  fd = lookup_fd (handle);
+  struct file_descriptor * fd = lookup_fd (handle);
   if (fd!= NULL){
 	  lock_acquire (&fs_lock);
 	  file_tell(fd->file);
