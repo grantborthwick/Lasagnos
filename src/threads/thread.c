@@ -290,7 +290,7 @@ void
 thread_exit (void) 
 {
   ASSERT (!intr_context ());
-
+  //sema_up(&thread_current ()->wait_status->dead); //Do this for make check if not everything implemented.
 #ifdef USERPROG
   process_exit ();
 #endif

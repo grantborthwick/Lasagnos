@@ -81,8 +81,6 @@ syscall_handler (struct intr_frame *f)
 	/* Get the system call. */
 	copy_in(&call_nr, f->esp, sizeof call_nr);
 	
-	printf("entering SYSCALLER: %d\n", call_nr);
-	
 	if(call_nr >= sizeof syscall_table / sizeof *syscall_table)
 		thread_exit();
 	sc = syscall_table + call_nr;
