@@ -188,9 +188,9 @@ sys_exit (int exit_code)
 {
   struct thread *t = thread_current();
   t->wait_status->exit_code = exit_code;
-  printf("%s: exit(%d)\n", t->name, exit_code);
+  //printf("%s: exit(%d)\n", t->name, exit_code);
   thread_exit ();
-  //NOT_REACHED ();
+  NOT_REACHED ();
 }
  
 /* Exec system call. */
@@ -213,19 +213,14 @@ sys_wait (tid_t child)
 static int
 sys_create (const char *ufile, unsigned initial_size) 
 {
-	printf("creating file\n");
 	bool sucess = false;
 	char *kfile = copy_in_string(ufile);
 	lock_acquire (&fs_lock);
-	printf("aquiring lock\n");
 	if (kfile != NULL)
 	{
-		printf("setting sucess\n");
 		sucess = filesys_create (kfile, (off_t)initial_size); 
 	}
-	printf("releasing lock\n");
 	lock_release (&fs_lock);
-	printf("finished creating file");
   return sucess;
 }
  
