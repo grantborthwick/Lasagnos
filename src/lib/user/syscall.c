@@ -103,7 +103,6 @@ remove (const char *file)
 int
 open (const char *file)
 {
-  printf("attemping OPEN\n");
   return syscall1 (SYS_OPEN, file);
 }
 

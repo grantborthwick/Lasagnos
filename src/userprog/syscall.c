@@ -200,8 +200,8 @@ sys_exec (const char *ufile)
 static int
 sys_wait (tid_t child) 
 {
-/* Add code */
-  thread_exit ();
+  process_wait(child);
+  //thread_exit ();
 }
  
 /* Create system call. */
