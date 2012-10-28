@@ -184,6 +184,7 @@ static int
 sys_exit (int exit_code) 
 {
   thread_current ()->wait_status->exit_code = exit_code;
+  sema_up(&(thread_current ()->wait_status->dead));
   thread_exit ();
   NOT_REACHED ();
 }
