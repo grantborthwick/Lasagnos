@@ -139,11 +139,16 @@ release_child (struct wait_status *cs)
 int
 process_wait (tid_t child_tid) 
 {
-  printf("WAIT: in process_wait\n");  
-  while(1)
-  {
-	  
+  while(1){}
+  struct list_elem * e;
+  struct thread * t = NULL;
+  struct thread * cur = thread_current();
+  for (e = list_begin (&cur->children); e != list_end (&cur->children);e = list_next (e)){
+      struct thread * t2 = list_entry (e, struct thread, allelem);
+      if (t2->tid == child_tid){t = t2; break;}
   }
+  if (t == NULL){return -1;}
+  sema_down(&(t->wait_status->dead));
   return -1;
 }
 
