@@ -46,9 +46,7 @@ syscall_init (void)
 
 static void
 syscall_handler (struct intr_frame *f)
-{
-	printf ("system call!\n");
-  
+{  
 	typedef int syscall_function(int, int, int);
 	
 	struct syscall
@@ -79,10 +77,9 @@ syscall_handler (struct intr_frame *f)
 	unsigned call_nr;
 	int args[3];
 	
-	printf ("system call!\n");
 	/* Get the system call. */
-	copy_in(&call_nr, f->esp + 1, sizeof *args * sc->arg_cnt);
-	printf ("system call!\n");
+	copy_in(&call_nr, f->esp, sizeof call_nr);
+	
 	if(call_nr >= sizeof syscall_table / sizeof *syscall_table)
 		thread_exit();
 	sc = syscall_table + call_nr;
@@ -140,7 +137,6 @@ copy_in (void *dst_, const void *usrc_, size_t size)
 {
   uint8_t *dst = dst_;
   const uint8_t *usrc = usrc_;
-	printf("copying in string from userspace\n");
 	
   for (; size > 0; size--, dst++, usrc++) 
     if (usrc >= (uint8_t *) PHYS_BASE || !get_user (dst, usrc)) 
@@ -212,14 +208,32 @@ sys_wait (tid_t child)
 static int
 sys_create (const char *ufile, unsigned initial_size) 
 {
-  return 0;
+	bool sucess = false;
+	char *kfile = copy_in_string(ufile);
+	lock_acquire (&fs_lock);
+	if (kfile != NULL)
+	{
+		sucess = filesys_create (kfile, (off_t)initial_size); 
+	}
+	lock_release (&fs_lock);
+	
+  return sucess;
 }
  
 /* Remove system call. */
 static int
 sys_remove (const char *ufile) 
 {
-/* Add code */
+	bool sucess = false;
+	char *kfile = copy_in_string(ufile);
+	lock_acquire (&fs_lock);
+	if (kfile != NULL)
+	{
+		sucess = filesys_remove (kfile) ; 
+	}
+	lock_release (&fs_lock);
+	
+  return sucess;
 }
  
 /* A file descriptor, for binding a file handle to a file. */
@@ -392,14 +406,27 @@ sys_tell (int handle)
 static int
 sys_close (int handle) 
 {
-/* Add code */
-  thread_exit ();
+	struct file_descriptor *fd = lookup_fd(handle);
+	if (fd != NULL)
+	{
+		struct file *closeFile = fd->file;
+		
+		if(closeFile != NULL)
+		{
+			lock_acquire (&fs_lock);
+			file_close (closeFile);
+			list_remove(&fd->elem);
+			lock_release (&fs_lock);
+			return true;
+		}
+	}
+	return false;
 }
  
 /* On thread exit, close all open files. */
 void
 syscall_exit (void) 
 {
-/* Add code */
+
   return;
 }
