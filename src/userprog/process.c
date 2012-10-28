@@ -147,8 +147,14 @@ process_wait (tid_t child_tid)
       if (t2->tid == child_tid){t = t2; break;}
   }
   if (t == NULL){return -1;}
+  
   sema_down(&(t->dead));
-  return 0;
+  list_remove(e);
+  //sema_up(&(t->dead));
+  
+  //int temp = t->exit_code;
+  //t->exit_code = -1;
+  return t->exit_code;
 }
 
 /* Free the current process's resources. */
