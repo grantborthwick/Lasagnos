@@ -1,6 +1,5 @@
 #include <syscall.h>
 #include "../syscall-nr.h"
-#include <stdio.h>
 
 /* Invokes syscall NUMBER, passing no arguments, and returns the
    return value as an `int'. */
