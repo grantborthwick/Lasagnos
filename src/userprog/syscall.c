@@ -265,6 +265,19 @@ static struct file_descriptor *
 lookup_fd (int handle)
 {
 /* Add code to lookup file descriptor in the current thread's fds */
+  
+  struct thread* cur = thread_current();
+  struct list_elem* e = list_front(&(cur->fds));
+  struct file_descriptor * e2;
+  while(e != NULL){
+	  e2 = list_entry(e, struct file_descriptor, elem);
+	  if (e2->handle == handle){ 
+		  lock_release (&fs_lock); 
+		  return e2;
+	  }
+	  e = list_next(e);
+  }
+  
   thread_exit ();
 }
  
@@ -272,8 +285,11 @@ lookup_fd (int handle)
 static int
 sys_filesize (int handle) 
 {
-/* Add code */
-  thread_exit ();
+  struct file_descriptor * e2 = lookup_fd(handle);
+  lock_acquire (&fs_lock);
+  int len = file_length( e2->file);
+  lock_release (&fs_lock);
+  return len;
 }
  
 /* Read system call. */
@@ -281,7 +297,13 @@ static int
 sys_read (int handle, void *udst_, unsigned size) 
 {
 /* Add code */
-  thread_exit ();
+  struct file_descriptor* fd = lookup_fd(handle); // NEED TO FIGURE OUT FILE IO. MAYBE FROM STDOUT_FILENO...
+  if (fd != NULL){
+	lock_acquire (&fs_lock);
+	int read = file_read(fd->file, udst_, size);
+	lock_release (&fs_lock);
+	return read;
+  } else{return -1;}
 }
  
 /* Write system call. */
@@ -291,7 +313,7 @@ sys_write (int handle, void *usrc_, unsigned size)
   uint8_t *usrc = usrc_;
   struct file_descriptor *fd = NULL;
   int bytes_written = 0;
-
+  
   /* Lookup up file descriptor. */
   if (handle != STDOUT_FILENO)
     fd = lookup_fd (handle);
@@ -344,15 +366,25 @@ sys_write (int handle, void *usrc_, unsigned size)
 static int
 sys_seek (int handle, unsigned position) 
 {
-/* Add code */
-  thread_exit ();
+  fd = lookup_fd (handle);
+  if (fd!= NULL){
+	  lock_acquire (&fs_lock);
+	  file_seek(fd->file, position);
+	  lock_release (&fs_lock);
+  }
+  //thread_exit ();
 }
  
 /* Tell system call. */
 static int
 sys_tell (int handle) 
 {
-/* Add code */
+  fd = lookup_fd (handle);
+  if (fd!= NULL){
+	  lock_acquire (&fs_lock);
+	  file_tell(fd->file);
+	  lock_release (&fs_lock);
+  }
   thread_exit ();
 }
  
