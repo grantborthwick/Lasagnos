@@ -79,7 +79,7 @@ syscall_handler (struct intr_frame *f)
 	unsigned call_nr;
 	int args[3];
 	
-	printf ("system call!\n");
+	printf ("system call! 2\n");
 	/* Get the system call. */
 	copy_in(&call_nr, f->esp + 1, sizeof *args * sc->arg_cnt);
 	printf ("system call!\n");
