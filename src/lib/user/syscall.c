@@ -1,5 +1,6 @@
 #include <syscall.h>
 #include "../syscall-nr.h"
+#include <stdio.h>
 
 /* Invokes syscall NUMBER, passing no arguments, and returns the
    return value as an `int'. */
@@ -102,6 +103,7 @@ remove (const char *file)
 int
 open (const char *file)
 {
+  printf("attemping OPEN\n");
   return syscall1 (SYS_OPEN, file);
 }
 
