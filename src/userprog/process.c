@@ -139,6 +139,11 @@ release_child (struct wait_status *cs)
 int
 process_wait (tid_t child_tid) 
 {
+  printf("WAIT: in process_wait\n");  
+  while(1)
+  {
+	  
+  }
   return -1;
 }
 

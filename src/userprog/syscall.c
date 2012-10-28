@@ -77,8 +77,11 @@ syscall_handler (struct intr_frame *f)
 	unsigned call_nr;
 	int args[3];
 	
+	
 	/* Get the system call. */
 	copy_in(&call_nr, f->esp, sizeof call_nr);
+	
+	printf("entering SYSCALLER: %d\n", call_nr);
 	
 	if(call_nr >= sizeof syscall_table / sizeof *syscall_table)
 		thread_exit();
@@ -183,9 +186,11 @@ sys_halt (void)
 static int
 sys_exit (int exit_code) 
 {
-  thread_current ()->wait_status->exit_code = exit_code;
+  struct thread *t = thread_current();
+  t->wait_status->exit_code = exit_code;
+  printf("%s: exit(%d)\n", t->name, exit_code);
   thread_exit ();
-  NOT_REACHED ();
+  //NOT_REACHED ();
 }
  
 /* Exec system call. */
@@ -208,15 +213,19 @@ sys_wait (tid_t child)
 static int
 sys_create (const char *ufile, unsigned initial_size) 
 {
+	printf("creating file\n");
 	bool sucess = false;
 	char *kfile = copy_in_string(ufile);
 	lock_acquire (&fs_lock);
+	printf("aquiring lock\n");
 	if (kfile != NULL)
 	{
+		printf("setting sucess\n");
 		sucess = filesys_create (kfile, (off_t)initial_size); 
 	}
+	printf("releasing lock\n");
 	lock_release (&fs_lock);
-	
+	printf("finished creating file");
   return sucess;
 }
  
@@ -399,7 +408,6 @@ sys_tell (int handle)
 	  file_tell(fd->file);
 	  lock_release (&fs_lock);
   }
-  thread_exit ();
 }
  
 /* Close system call. */
