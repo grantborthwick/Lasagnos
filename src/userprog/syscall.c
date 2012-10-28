@@ -186,9 +186,8 @@ sys_halt (void)
 static int
 sys_exit (int exit_code) 
 {
-  struct thread *t = thread_current();
-  t->wait_status->exit_code = exit_code;
-  //printf("%s: exit(%d)\n", t->name, exit_code);
+  thread_current ()->wait_status->exit_code = exit_code;
+  sema_up(&(thread_current ()->wait_status->dead));
   thread_exit ();
   NOT_REACHED ();
 }
@@ -197,16 +196,16 @@ sys_exit (int exit_code)
 static int
 sys_exec (const char *ufile) 
 {
-/* Add code */
-  thread_exit ();
+	char *kfile = copy_in_string(ufile);
+	return process_execute(kfile);
 }
  
 /* Wait system call. */
 static int
 sys_wait (tid_t child) 
 {
-  process_wait(child);
   //thread_exit ();
+  return process_wait(child);
 }
  
 /* Create system call. */
