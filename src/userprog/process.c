@@ -149,14 +149,7 @@ process_wait (tid_t child_tid)
   if (t == NULL){return -1;}
   
   sema_down(&(t->dead));
-<<<<<<< HEAD
-=======
   list_remove(e);
-  //sema_up(&(t->dead));
-  
-  //int temp = t->exit_code;
-  //t->exit_code = -1;
->>>>>>> 8a02d8392796aa4bae7b9e5f21034f6b66aaecca
   return t->exit_code;
 }
 
