@@ -583,7 +583,10 @@ init_cmd_line (uint8_t *kpage, uint8_t *upage, const char *cmd_line,
     return false;
 
   /* Set initial stack pointer. */
-  *esp = PHYS_BASE - 12;
+  printf("PHYS_BASE: %x\n", PHYS_BASE);
+  printf("upage: %x\n", upage + ofs);
+  
+  *esp = PHYS_BASE - 32;
   //*esp = upage + ofs;
   return true;
 }

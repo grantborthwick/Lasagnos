@@ -79,8 +79,10 @@ syscall_handler (struct intr_frame *f)
 	unsigned call_nr;
 	int args[3];
 	
+	printf ("system call!\n");
 	/* Get the system call. */
 	copy_in(&call_nr, f->esp + 1, sizeof *args * sc->arg_cnt);
+	printf ("system call!\n");
 	if(call_nr >= sizeof syscall_table / sizeof *syscall_table)
 		thread_exit();
 	sc = syscall_table + call_nr;
@@ -138,7 +140,8 @@ copy_in (void *dst_, const void *usrc_, size_t size)
 {
   uint8_t *dst = dst_;
   const uint8_t *usrc = usrc_;
- 
+	printf("copying in string from userspace\n");
+	
   for (; size > 0; size--, dst++, usrc++) 
     if (usrc >= (uint8_t *) PHYS_BASE || !get_user (dst, usrc)) 
       thread_exit ();
