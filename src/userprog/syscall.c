@@ -211,6 +211,7 @@ static int
 sys_create (const char *ufile, unsigned initial_size) 
 {
 	bool sucess = false;
+	if(ufile==NULL){return(-1);}//This presently does not work...
 	char *kfile = copy_in_string(ufile);
 	lock_acquire (&fs_lock);
 	if (kfile != NULL)
@@ -249,7 +250,9 @@ struct file_descriptor
 static int
 sys_open (const char *ufile) 
 {
+  if(ufile==NULL){return -1;}
   char *kfile = copy_in_string (ufile);
+  //if(kfile==NULL){return -1;}
   struct file_descriptor *fd;
   int handle = -1;
  
