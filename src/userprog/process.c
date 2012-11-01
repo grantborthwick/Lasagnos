@@ -527,9 +527,14 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 static void
 reverse (int argc, char **argv) 
 {
-   /* add code */
-
-   return;
+	int i;
+	char* temp;
+    for(i=0;i<argc/2;++i){
+		temp = argv[argc-1-i];
+		argv[argc-1-i] = argv[i];
+		argv[i] = temp;
+    }
+    return;
 }
 
 /* Pushes the SIZE bytes in BUF onto the stack in KPAGE, whose
