@@ -151,7 +151,13 @@ page_fault (struct intr_frame *f)
   /* Handle bad dereferences from system call implementation. */
 
   /* add code */
-
+	/* Handle bad dereferences from system call implementation. */
+  if (!user)
+  {
+    f->eip = (void (*) (void)) f->eax;
+    f->eax = 0;
+    return;
+  }
 
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to

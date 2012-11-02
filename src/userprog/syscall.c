@@ -212,7 +212,7 @@ static int
 sys_create (const char *ufile, unsigned initial_size) 
 {
 	bool sucess = false;
-	if(ufile==NULL)
+	if(ufile==NULL || !verify_user(ufile))
 	{
 		//close the program
 		sys_exit(-1);
