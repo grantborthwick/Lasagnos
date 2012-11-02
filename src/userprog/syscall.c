@@ -141,7 +141,7 @@ copy_in (void *dst_, const void *usrc_, size_t size)
 	
   for (; size > 0; size--, dst++, usrc++) 
     if (usrc >= (uint8_t *) PHYS_BASE || !get_user (dst, usrc)) 
-      thread_exit ();
+      sys_exit (-1);
 }
  
 /* Creates a copy of user string US in kernel memory
@@ -185,7 +185,6 @@ static int
 sys_exit (int exit_code) 
 {
   thread_current ()->wait_status->exit_code = exit_code;
-  //printf("wait_status->exit_code = %d\n", thread_current ()->wait_status->exit_code);
   sema_up(&(thread_current ()->wait_status->dead));
   thread_exit ();
   NOT_REACHED ();
@@ -195,8 +194,15 @@ sys_exit (int exit_code)
 static int
 sys_exec (const char *ufile) 
 {
+	
+	if(ufile==NULL || !verify_user(ufile))
+	{
+		sys_exit(-1);
+		NOT_REACHED ();
+	}
 	char *kfile = copy_in_string(ufile);
 	return process_execute(kfile);
+	 palloc_free_page(kfile);
 }
  
 /* Wait system call. */
@@ -218,15 +224,14 @@ sys_create (const char *ufile, unsigned initial_size)
 		sys_exit(-1);
 		NOT_REACHED ();
 	}
-	printf("attempting copy\n");
 	char *kfile = copy_in_string(ufile);
-	printf("copy worked!\n");
 	lock_acquire (&fs_lock);
 	if (kfile != NULL)
 	{
 		sucess = filesys_create (kfile, (off_t)initial_size); 
 	}
 	lock_release (&fs_lock);
+	 palloc_free_page(kfile);
   return sucess;
 }
  
@@ -234,6 +239,12 @@ sys_create (const char *ufile, unsigned initial_size)
 static int
 sys_remove (const char *ufile) 
 {
+	if(ufile==NULL || !verify_user(ufile))
+	{
+		//close the program
+		sys_exit(-1);
+		NOT_REACHED ();
+	}
 	bool sucess = false;
 	char *kfile = copy_in_string(ufile);
 	lock_acquire (&fs_lock);
@@ -242,7 +253,7 @@ sys_remove (const char *ufile)
 		sucess = filesys_remove (kfile) ; 
 	}
 	lock_release (&fs_lock);
-	
+	 palloc_free_page(kfile);
   return sucess;
 }
  
@@ -258,9 +269,14 @@ struct file_descriptor
 static int
 sys_open (const char *ufile) 
 {
-  if(ufile==NULL){return -1;}
+  if(ufile==NULL || !verify_user(ufile))
+	{
+		//close the program
+		sys_exit(-1);
+		NOT_REACHED ();
+	}
   char *kfile = copy_in_string (ufile);
-  //if(kfile==NULL){return -1;}
+  
   struct file_descriptor *fd;
   int handle = -1;
  
@@ -293,18 +309,18 @@ lookup_fd (int handle)
 /* Add code to lookup file descriptor in the current thread's fds */
   
   struct thread* cur = thread_current();
+  if (list_empty(&(cur->fds))) sys_exit(-1);
   struct list_elem* e = list_front(&(cur->fds));
+  
   struct file_descriptor * e2;
   while(e != NULL){
 	  e2 = list_entry(e, struct file_descriptor, elem);
 	  if (e2->handle == handle){ 
-		  lock_release (&fs_lock); 
 		  return e2;
 	  }
 	  e = list_next(e);
   }
-  
-  thread_exit ();
+  sys_exit(-1);
 }
  
 /* Filesize system call. */
@@ -322,20 +338,35 @@ sys_filesize (int handle)
 static int
 sys_read (int handle, void *udst_, unsigned size) 
 {
-/* Add code */
-  struct file_descriptor* fd = lookup_fd(handle); // NEED TO FIGURE OUT FILE IO. MAYBE FROM STDOUT_FILENO...
-  if (fd != NULL){
+	int read;
+	if(udst_==NULL || !verify_user(udst_))
+	{
+		//close the program
+		sys_exit(-1);
+		NOT_REACHED ();
+	}
+	struct file_descriptor* fd = lookup_fd(handle); 
+	
+	if(fd == NULL) sys_exit(-1);
+	
 	lock_acquire (&fs_lock);
-	int read = file_read(fd->file, udst_, size);
+	read = file_read(fd->file, udst_, size);
 	lock_release (&fs_lock);
+  
 	return read;
-  } else{return -1;}
 }
  
 /* Write system call. */
 static int
 sys_write (int handle, void *usrc_, unsigned size) 
 {
+  if(usrc_==NULL || !verify_user(usrc_))
+	{
+		//close the program
+		sys_exit(-1);
+		NOT_REACHED ();
+	}
+	
   uint8_t *usrc = usrc_;
   struct file_descriptor *fd = NULL;
   int bytes_written = 0;
@@ -351,13 +382,6 @@ sys_write (int handle, void *usrc_, unsigned size)
       size_t page_left = PGSIZE - pg_ofs (usrc);
       size_t write_amt = size < page_left ? size : page_left;
       off_t retval;
-
-      /* Check that we can touch this user page. */
-      if (!verify_user (usrc)) 
-        {
-          lock_release (&fs_lock);
-          thread_exit ();
-        }
 
       /* Do the write. */
       if (handle == STDOUT_FILENO)

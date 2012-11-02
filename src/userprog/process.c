@@ -157,7 +157,6 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-  //printf(" "); //Having this line causes exit code to print??? Not having it does not.
   struct thread *cur = thread_current ();
   struct list_elem *e, *next;
   uint32_t *pd;
@@ -167,15 +166,12 @@ process_exit (void)
   /* Notify parent that we're dead. */
   if (cur->wait_status != NULL) 
     {
-      /* add code */
+      
       struct wait_status *cs = cur->wait_status;
+	  printf ("%s: exit(%d)\n", cur->name,cur->wait_status->exit_code); 
 	  sema_up(&cur->wait_status->dead);
-      printf ("%s: exit(%d)\n", cur->name,cur->wait_status->exit_code); 
-
       release_child (cs);
     }
-	//else{printf("something bad..\n");}// Put this in to check. REMOVE
-    // Maybe if null make wait_status?
 	
   /* Free entries of children list. */
   for (e = list_begin (&cur->children); e != list_end (&cur->children);
