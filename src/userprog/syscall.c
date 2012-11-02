@@ -185,6 +185,7 @@ static int
 sys_exit (int exit_code) 
 {
   thread_current ()->wait_status->exit_code = exit_code;
+  //printf("wait_status->exit_code = %d\n", thread_current ()->wait_status->exit_code);
   sema_up(&(thread_current ()->wait_status->dead));
   thread_exit ();
   NOT_REACHED ();
@@ -211,8 +212,15 @@ static int
 sys_create (const char *ufile, unsigned initial_size) 
 {
 	bool sucess = false;
-	if(ufile==NULL){return(-1);}//This presently does not work...
+	if(ufile==NULL)
+	{
+		//close the program
+		sys_exit(-1);
+		NOT_REACHED ();
+	}
+	printf("attempting copy\n");
 	char *kfile = copy_in_string(ufile);
+	printf("copy worked!\n");
 	lock_acquire (&fs_lock);
 	if (kfile != NULL)
 	{

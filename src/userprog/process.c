@@ -157,21 +157,20 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-  //printf(" "); Having this line causes exit code to print??? Not having it does not.
+  //printf(" "); //Having this line causes exit code to print??? Not having it does not.
   struct thread *cur = thread_current ();
   struct list_elem *e, *next;
   uint32_t *pd;
 
   /* Close executable (and allow writes). */
   file_close (cur->bin_file);
-
   /* Notify parent that we're dead. */
   if (cur->wait_status != NULL) 
     {
       /* add code */
       struct wait_status *cs = cur->wait_status;
 	  sema_up(&cur->wait_status->dead);
-      printf ("%s: exit(%d)\n", cur->name,cur->wait_status->exit_code); // HACK all successful ;-)
+      printf ("%s: exit(%d)\n", cur->name,cur->wait_status->exit_code); 
 
       release_child (cs);
     }
