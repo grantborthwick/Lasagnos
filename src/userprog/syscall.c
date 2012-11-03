@@ -82,7 +82,7 @@ syscall_handler (struct intr_frame *f)
 	copy_in(&call_nr, f->esp, sizeof call_nr);
 	
 	if(call_nr >= sizeof syscall_table / sizeof *syscall_table)
-		thread_exit();
+		sys_exit(-1);
 	sc = syscall_table + call_nr;
 	
 	ASSERT(sc->arg_cnt <= sizeof args / sizeof *args);
@@ -155,14 +155,14 @@ copy_in_string (const char *us)
  
   ks = palloc_get_page (PAL_ZERO | PAL_ASSERT);
   if (ks == NULL)
-    thread_exit ();
+    sys_exit(-1);
  
   for (length = 0; length < PGSIZE; length++)
     {
       if (us >= (char *) PHYS_BASE || !get_user (ks + length, us++)) 
         {
           palloc_free_page (ks);
-          thread_exit (); 
+          sys_exit(-1); 
         }
       if (ks[length] == '\0')
         return ks;
@@ -198,15 +198,16 @@ sys_exec (const char *ufile)
 		NOT_REACHED ();
 	}
 	char *kfile = copy_in_string(ufile);
-	return process_execute(kfile);
-	 palloc_free_page(kfile);
+	int t_tid = process_execute(kfile);
+	palloc_free_page(kfile);
+	return  t_tid;
+	 
 }
  
 /* Wait system call. */
 static int
 sys_wait (tid_t child) 
 {
-  //thread_exit ();
   return process_wait(child);
 }
  
