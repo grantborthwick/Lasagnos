@@ -25,8 +25,8 @@ static int sys_open (const char *ufile);
 static int sys_filesize (int handle);
 static int sys_read (int handle, void *udst_, unsigned size);
 static int sys_write (int handle, void *usrc_, unsigned size);
-static int sys_seek (int handle, unsigned position);
-static int sys_tell (int handle);
+static void sys_seek (int handle, unsigned position);
+static unsigned int sys_tell (int handle);
 static int sys_close (int handle);
  
 static void syscall_handler (struct intr_frame *);
@@ -93,8 +93,6 @@ syscall_handler (struct intr_frame *f)
 	 * and set the return value. */
 	f->eax = sc->func(args[0], args[1], args[2]);
 
-  
-  //thread_exit ();
 }
 
 /* Returns true if UADDR is a valid, mapped user address,
@@ -185,7 +183,6 @@ static int
 sys_exit (int exit_code) 
 {
   thread_current ()->wait_status->exit_code = exit_code;
-  sema_up(&(thread_current ()->wait_status->dead));
   thread_exit ();
   NOT_REACHED ();
 }
@@ -413,7 +410,7 @@ sys_write (int handle, void *usrc_, unsigned size)
 }
  
 /* Seek system call. */
-static int
+static void
 sys_seek (int handle, unsigned position) 
 {
   struct file_descriptor * fd = lookup_fd (handle);
@@ -422,19 +419,21 @@ sys_seek (int handle, unsigned position)
 	  file_seek(fd->file, position);
 	  lock_release (&fs_lock);
   }
-  //thread_exit ();
 }
  
 /* Tell system call. */
-static int
+static unsigned int
 sys_tell (int handle) 
 {
   struct file_descriptor * fd = lookup_fd (handle);
+  unsigned int next;
   if (fd!= NULL){
 	  lock_acquire (&fs_lock);
-	  file_tell(fd->file);
+	  next = file_tell(fd->file);
 	  lock_release (&fs_lock);
+	  return next;
   }
+  return -1;
 }
  
 /* Close system call. */
@@ -452,16 +451,15 @@ sys_close (int handle)
 			file_close (closeFile);
 			list_remove(&fd->elem);
 			lock_release (&fs_lock);
-			return true;
+			return 1;
 		}
 	}
-	return false;
+	return 0;
 }
  
 /* On thread exit, close all open files. */
 void
 syscall_exit (void) 
 {
-
   return;
 }
