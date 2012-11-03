@@ -1,0 +1,197 @@
+		           +--------------------------+
+                                   |         CIS 520          |
+		           | PROJECT 2: USER PROGRAMS |
+		           |     DESIGN DOCUMENT      |
+		           +--------------------------+
+
+---- GROUP ----
+
+Grant Borthwick
+Benjamin Kuestersteffen
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+Sources: http://www.cplusplus.com/reference/clibrary/cstring/strtok/
+
+			   ARGUMENT PASSING
+			   ================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+- We did not change any of the data structures for this part.
+
+---- ALGORITHMS ----
+
+>> A2: Briefly describe how you implemented argument parsing.  How do
+>> you arrange for the elements of argv[] to be in the right order?
+>> How do you avoid overflowing the stack page?
+
+- The argument parsing code was already implemented for us. To arrange the elements of argv[] to be in the right order, we simply implemented this function:
+
+reverse(int argc, char**argv){
+int i;
+	char* temp;
+    	for(i=0;i<argc/2;++i){
+		temp = argv[argc-1-i];
+		argv[argc-1-i] = argv[i];
+		argv[i] = temp;
+    	}
+    	return;
+}
+
+
+---- RATIONALE ----
+
+>> A3: Why does Pintos implement strtok_r() but not strtok()?
+
+- strtok() modifies the string you pass to it.
+
+>> A4: In Pintos, the kernel separates commands into a executable name
+>> and arguments.  In Unix-like systems, the shell does this
+>> separation.  Identify at least two advantages of the Unix approach.
+
+- If someone were to break the code that separates them, they would only have access to the shell rather than the kernel.
+- Allows users to put in any number of arguments without having a set limit within the kernel. To eliminate this limit, the kernel would have to use virtual memory.
+
+			     SYSTEM CALLS
+			     ============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+- We had no new global or static variables
+
+>> B2: Describe how file descriptors are associated with open files.
+>> Are file descriptors unique within the entire OS or just within a
+>> single process?
+
+- Every process has its own set of file descriptors, numbered starting from 2.  Each of these handles is saved in a list in the process, and these handles link to  the complete file descriptor in the kernel thread.  These are unique within each process, and cannot be accessed globally.  
+
+---- ALGORITHMS ----
+
+>> B3: Describe how the code copy_in_string is used to read data from
+>> user space to the kernel.
+
+- Copy_in_string takes in a character pointer from the user space, gets a new page in kernel space above PHYS_BASE, and copies the characters one by one from user space until a \0 character is hit.  The address to the kernel page is returned.  
+
+
+>> B4: Suppose a system call causes a full page (4,096 bytes) of data
+>> to be copied from user space into the kernel.  What is the least
+>> and the greatest possible number of inspections of the page table
+>> (e.g. calls to pagedir_get_page()) that might result?  What about
+>> for a system call that only copies 2 bytes of data?  Is there room
+>> for improvement in these numbers, and how much?
+
+- The page table is called as each byte is looked up, so the maximum number of calls is 4K times.  In comparison, if only two bytes is copied it will only be called twice, plus any error checking that needs to be made in both of them.  These numbers could possibly be improved, but any performance improvements would be minor at best, as the page table is usually cached.  
+
+>> B5: Briefly describe your implementation of the "wait" system call
+>> and how it interacts with process termination.
+
+- The wait system call simply calls process_wait on the passed in child. Within process_wait, we check if the child is one of thread_current’s children, and if so, we call sema_down on its dead semaphore and then remove it from the thread’s children list.
+
+>> B6: Any access to user program memory at a user-specified address
+>> can fail due to a bad pointer value.  Such accesses must cause the
+>> process to be terminated.  System calls are fraught with such
+>> accesses, e.g. a "write" system call requires reading the system
+>> call number from the user stack, then each of the call's three
+>> arguments, then an arbitrary amount of user memory, and any of
+>> these can fail at any point.  This poses a design and
+>> error-handling problem: how do you best avoid obscuring the primary
+>> function of code in a morass of error-handling?  Furthermore, when
+>> an error is detected, how do you ensure that all temporarily
+>> allocated resources (locks, buffers, etc.) are freed?  In a few
+>> paragraphs, describe the strategy or strategies you adopted for
+>> managing these issues.  Give an example.
+
+- We use a useful function called verify_user that was implemented for us to keep our code clear and concise. Freeing allocated resources is handled by thread_exit() and process_exit().
+
+To keep our code clear and concise, we used the verify_user function to verify user addresses we needed to dereference within the syscall handler. This function was already written for us and helps to clean up code by moving redundant parts of each syscall into a single location.
+
+Freeing resources is handled in the thread_exit and process_exit functions. process_exit releases all pages owned by a process. 
+
+---- SYNCHRONIZATION ----
+
+>> B7: The "exec" system call returns -1 if loading the new executable
+>> fails, so it cannot return before the new executable has completed
+>> loading.  How does your code ensure this?  How is the load
+>> success/failure status passed back to the thread that calls "exec"?
+	
+- The exec syscall calls process_execute, which then makes the user thread. If this thread is not made properly, thread.c does not keep it in the runnable threads, and it is not pushed onto the children of the currently running thread. If this occurs, process_execute returns -1 rather than the thread id (as the thread does not exist). This value is then returned from the exec system call. 
+
+>> B8: Consider parent process P with child process C.  How do you
+>> ensure proper synchronization and avoid race conditions when P
+>> calls wait(C) before C exits?  After C exits?  How do you ensure
+>> that all resources are freed in each case?  How about when P
+>> terminates without waiting, before C exits?  After C exits?  Are
+>> there any special cases?
+
+- Wait(C) will wait for process C to raise a semaphore in P when C exits.  If C is still running when wait(C) is called from P, P will sema_wait on this semaphore until C exits.  If C has already exited when wait(C) is called, then this semaphore will already be raised, and the wait(C) command will immediately be returned.  If P does not wait on C, P wait_status will be set to null, and the C will free its resources, excluding wait_status, which has already been freed, and exit.  If C exists before P, P will ignore the previously freed wait_status, (since wait_status is linked to both parent and child.)
+
+
+---- RATIONALE ----
+
+>> B9: Why did you choose to implement access to user memory from the
+>> kernel in the way that you did?
+
+- We took the approach of copying the user data into kernel space whenever the kernel thread needed data from the user.  This allowed us to keep a clean line of demarcation between the two areas, as well as allow easier debugging and understanding by the programmer.  
+
+>> B10: What advantages or disadvantages can you see to your design
+>> for file descriptors?
+
+- One disadvantage is that the user process cannot see any data about the descriptor other than the handle number, not allowing it to make any judgements or changes to the contents.  This is also an advantage, though as it does not allow the process to muck with this important data.  
+
+>> B11: The default tid_t to pid_t mapping is the identity mapping.
+>> If you changed it, what advantages are there to your approach?
+
+- Each pid is simply a one-to-one mapping from a unique tid. Each process does not actually keep track of a unique pid. By doing this, there are less numbers that we actually have to keep track of. If we were to separate pid from its thread’s tid, we could let processes have more than one thread. We could also let more than one process own a single thread. This would also allow us to let processes give or take threads from other processes. This could be useful when threads are dying.
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+- After we figured out what we were doing, this project was very straightforward. The project was only difficult because of the excessive information in the Proj2 pdf, and that the instructions told us to implement stuff that had already been implemented ahead of time.  This became even more confusing when this design document told us to describe stuff that we hadn’t even implemented.  The project took a good portion of time, but not too much time.
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+- Working with the system calls and the kernel threads gave us greater insight into just how separated the operating system makes user processes and how limited it makes them. 
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+- The code that was already implemented into the project was very useful. You should definitely include the syscall handler and the open system call for future classes. The Proj2 pdf included an excessive amount of information about things that we did not even have to implement in the project. The pdf should be trimmed and rewritten to make what students need to do clearer.  
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future quarters or the remaining projects?
+
+- The TA does a good job of effectively assisting students. He should keep on doing his best to be helpful.  
+
+-(Other student ->)  I found that while he tried to be helpful (and for that I was greatful,) our TA really didn’t seem to have a grasp on what the final product should be, and had to keep referring back to his completed code.  
+I understand that this is definitely not something you can memorize, but if I hope to show someone how something works, they shouldn’t have to hold my hand through the process of setting it up (most especially if I’m the one who assigned the assignment.)
+
+>> Any other comments?
+
+- There are a number of asm calls that magically make certain functions work. Explaining how these work and what they do would be interesting and beneficial.
